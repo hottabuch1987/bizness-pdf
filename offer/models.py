@@ -30,28 +30,16 @@ class Product(models.Model):
     def __str__(self):
         return self.name
     
+    @property
+    def main_photo_url(self):
+        if self.main_photo and hasattr(self.main_photo, 'url'):
+            return self.main_photo.url
+        return None
     
-    
-    def generate_pdf(self):
-        # Подготовка данных для шаблона
-        context = {
-            'product': self,
-            'price_formatted': f"{self.price:,.2f} руб.".replace(',', ' '),
-        }
-        
-        # Генерация HTML из шаблона
-        html_string = render_to_string('admin/product_template.html', context)
-        
-        # Создание PDF из HTML
-        buffer = BytesIO()
-        pdf = pisa.CreatePDF(html_string, dest=buffer)
-        
-        if pdf.err:
-            return None  # Обработка ошибок, если PDF не был создан
-        
-        buffer.seek(0)  # Переместить указатель в начало буфера
-        
-        # Сохранение PDF в поле модели
-        self.pdf_file.save(f'product_{self.article}.pdf', ContentFile(buffer.getvalue()))
-        self.save()
-        return self.pdf_file
+    @property
+    def additional_photos(self):
+        photos = []
+        if self.additional_photo1 and hasattr(self.additional_photo1, 'url'):
+            photos.append(self.additional_photo1.url)
+        if self.additional_photo2 and hasattr(self.additional_photo2, 'url'):
+            photos.append(self.additional_photo2.url)

@@ -18,11 +18,14 @@ from django.contrib import admin
 from django.urls import path
 from django.conf import settings
 from django.conf.urls.static import static
-from offer.views import simple_page
+from offer.views import upload_csv, product_list, edit_product, convert_to_pdf
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', simple_page, name='simple_page'),
+    path('', upload_csv, name='upload_csv'),
+    path('products/', product_list, name='product_list'),  
+    path('edit/<int:product_id>/', edit_product, name='edit_product'),  
+    path('convert_to_pdf/', convert_to_pdf, name='convert_to_pdf'),
 
 ]
 

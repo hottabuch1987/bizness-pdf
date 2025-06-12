@@ -1,0 +1,63 @@
+{% extends 'offer/base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>Редактирование товара: {{ product.name }}</h2>
+    
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        
+        <div class="row mb-4">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Основная информация</h5>
+                        {{ form.as_p }}
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Фотографии</h5>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Главное фото</label>
+                            {% if product.main_photo %}
+                                <div class="mb-2">
+                                    <img src="{{ product.main_photo.url }}" class="img-thumbnail" style="max-height: 200px;">
+                                </div>
+                            {% endif %}
+                            {{ form.main_photo }}
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Дополнительное фото 1</label>
+                            {% if product.additional_photo1 %}
+                                <div class="mb-2">
+                                    <img src="{{ product.additional_photo1.url }}" class="img-thumbnail" style="max-height: 200px;">
+                                </div>
+                            {% endif %}
+                            {{ form.additional_photo1 }}
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Дополнительное фото 2</label>
+                            {% if product.additional_photo2 %}
+                                <div class="mb-2">
+                                    <img src="{{ product.additional_photo2.url }}" class="img-thumbnail" style="max-height: 200px;">
+                                </div>
+                            {% endif %}
+                            {{ form.additional_photo2 }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <button type="submit" class="btn btn-primary">Сохранить</button>
+        <a href="{% url 'product_list' %}" class="btn btn-secondary">Отмена</a>
+    </form>
+</div>
+{% endblock %}
