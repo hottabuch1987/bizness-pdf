@@ -1,0 +1,723 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta charset="utf-8" /> 
+
+	<link rel="icon" href="images/favicon.png" type="image/x-icon">
+    <title>Altezza Outdoor Concept</title>
+	 <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@200..700&display=swap" rel="stylesheet">
+
+     <style>
+@import url('https://fonts.googleapis.com/css2?family=Oswald:wght@200..700&display=swap');
+        @media only screen and (min-width: 10px) { 
+	 
+
+.container {
+    width: 93.7500vw;
+    margin: 0 auto;
+    padding: 3.1250vw 0 0 0;
+}
+
+.slide { 
+}
+
+.title {
+	width: 29.1667vw; 
+	font-size: 2.3611vw;
+	line-height: 120%; 
+	margin-bottom: 1.5625vw;
+}
+
+.description { 
+	width: 29.1667vw; 
+	font-size: 1.25vw;
+	line-height: 140%; 
+}
+ 
+
+.slide__right { 
+	width: 40.4861vw;
+	height: 48.4028vw; 
+	margin-left: 1.5625vw;
+}
+
+img.slide__image {
+	width: 32.9167vw;
+	height: 48.4028vw; 
+	margin-right: 1.5625vw;
+	border-radius: 1.0417vw;
+}
+
+.slide__images {
+	width: 17.0833vw;
+	height: 48.4028vw;  
+	border-radius: 1.0417vw;
+}
+ 
+
+.slide__info {   
+	border: 0.0521vw solid #030303;
+	border-radius: 1.0417vw;
+	padding: 2.0833vw;
+	width: 40.4861vw;
+	height: 30.4167vw;
+}
+
+
+.slide__info img { 
+	margin-bottom: 2.0833vw; 
+	width: 9.5833vw;
+	height: 6.7361vw;
+}
+
+p.slide__price { 
+	font-weight: 400;
+	font-size: 2.0833vw;
+	line-height: 110%; 
+	
+	margin-top: 4.2583vw;
+}
+
+.slide__data { 
+	border-radius: 1.0417vw;
+	padding: 2.0833vw;
+	width: 40.4861vw;
+	height: 16.3889vw;
+ 
+	margin-top: 1.5625vw;
+}
+
+
+.slide__materials { 
+	width: 16.5972vw;
+	height: 10.7639vw;
+	margin-right: 3.1250vw;
+}
+
+.slide__sizes { 
+	width: 16.5972vw;
+	height: 10.7639vw; 
+}
+
+.slide__materials h2, .slide__sizes h2 {
+	font-weight: 600;
+	font-size: 1.25vw;
+	line-height: 140%; 
+	
+	margin-bottom: 1.5625vw;
+}
+
+
+.slide__materials ul li {
+	margin-bottom: 0.8333vw;
+}
+
+.slide__sizes ul li {
+	margin-bottom: 0.1042vw;
+}
+
+.slide__materials h2 {
+	margin-left: 1.7708vw;
+}
+
+.slide__materials ul li, .slide__sizes ul li { 
+	font-weight: 400;
+	font-size: 1.25vw;
+	line-height: 140%; 
+}
+ 
+
+.slide__materials ul li::before { 
+	width: 1.25vw;
+	height: 1.25vw; 
+	margin-right: 0.5208vw;
+}
+ 
+
+
+.slide__contacts { 
+	height: 5.4861vw;  
+}
+ 
+
+
+.slide__contacts a {
+	font-weight: 600;
+	font-size: 1.9444vw;
+	line-height: 120%;  
+	margin-right: 16.8403vw;
+}
+
+.slide__contacts a:last-child {  
+	margin-left: 12.8819vw;
+} 
+
+a.slide__links {
+	font-size: 1.6667vw;
+	line-height: 120%; 
+	font-weight: 400; 
+	margin-right: 3.9583vw;  
+}
+
+ 
+
+.slide2__top {  
+	margin-bottom: 1.5625vw;
+}
+ 
+
+img.slide2__image {
+	border-radius: 1.0417vw;
+	width: 59.2361vw;
+	height: 31.8750vw;  
+	margin-right: 1.5625vw;
+}
+
+.slide2__images {
+	border-radius: 1.0417vw;
+	width: 40.4861vw;
+	height: 14.9306vw;  
+}
+ 
+
+.slide2__info {  
+	border: 0.0521vw solid #030303;
+	border-radius: 1.0417vw;
+	padding: 2.0833vw;
+	width: 32.9167vw;
+	height: 31.8750vw;
+	margin-right: 1.5625vw;
+}
+
+
+.slide2__info img {  
+	margin-bottom: 2.0833vw; 
+	width: 9.5833vw;
+	height: 6.7361vw;
+}
+
+p.slide2__price { 
+	font-weight: 400;
+	font-size: 2.0833vw;
+	line-height: 110%; 
+	
+	margin-top: 4.2583vw;
+}
+
+.slide2__data {   
+	border-radius: 1.0417vw;
+	padding: 2.0833vw;
+	width: 51.6667vw;
+	height: 14.9306vw;
+ 
+	margin-right: 1.5625vw;  
+}
+
+
+.slide2__materials {
+	width: 16.8750vw; 
+	margin-right: 5.2083vw;
+}
+
+.slide2__sizes {  
+	width: 15.9722vw;
+}
+
+.slide2__materials h2, .slide2__sizes h2 { 
+	font-weight: 600;
+	font-size: 1.25vw;
+	line-height: 140%;
+	text-transform: uppercase;
+	margin-bottom: 1.5625vw; 
+}
+
+
+.slide2__materials h2 {
+	margin-left: 1.7708vw;
+}
+
+.slide2__materials ul li, .slide2__sizes ul li {
+	font-weight: 400;
+	font-size: 1.25vw;
+	line-height: 140%; 
+}
+
+.slide2__materials ul li {
+	margin-bottom: 0.8333vw;
+}
+
+.slide2__sizes ul li {
+	margin-bottom: 0.1042vw;
+}
+ 
+
+.slide2__materials ul li::before { 
+	height: 1.25vw;
+	width: 1.25vw;
+	margin-right: 0.5208vw;
+}
+    
+}
+html, body, div, span, applet, object, iframe,h1, h2, h3, h4, h5, h6, p, blockquote, pre,a, abbr, acronym, address, big, cite, code,del, dfn, em, img, ins, kbd, q, s, samp,small, strike, strong, sub, sup, tt, var,
+b, u, i, center,dl, dt, dd, ol, ul, li,fieldset, form, label, legend,table, caption, tbody, tfoot, thead, tr, th, td,article, aside, canvas, details, embed,figure, figcaption, footer, header, hgroup,
+menu, nav, output, ruby, section, summary,time, mark, audio, video {
+	margin: 0;	padding: 0;	border: 0;	font-size: 100%;	font: inherit;	vertical-align: baseline;
+}
+article, aside, details, figcaption, figure,footer, header, hgroup, menu, nav, section {display: block;}
+body {	line-height: 1;}
+ol, ul {	list-style: none;}
+blockquote, q {	quotes: none;}
+blockquote:before, blockquote:after,q:before, q:after {	content: '';	content: none;}
+table {	border-collapse: collapse;	border-spacing: 0;}
+*,html{box-sizing: border-box;}
+
+body {
+	background-color: #DDDDDD;
+	color: #030303;
+}
+
+a {
+    color: #030303;
+    text-decoration: none;
+    cursor: pointer;
+} 
+
+section {
+	font-family: "Oswald", sans-serif;
+    font-weight: 400;
+	background-color: #DDDDDD; 
+}
+
+.container {
+    width: 1350px;
+    margin: 0 auto;
+    padding: 45px 0 0 0;
+}
+
+.slide { 
+}
+
+.title {
+	width: 420px; 
+	font-size: 34px;
+	line-height: 120%;
+	text-transform: uppercase; 
+	margin-bottom: 22.5px;
+}
+
+.description { 
+	width: 420px; 
+	font-size: 18px;
+	line-height: 140%; 
+}
+
+.bold {
+	font-weight: 600;
+}
+.slide__wrapper {
+	display: flex; 
+}
+
+.slide__left { 
+	display: flex;
+	justify-content: center; 
+}
+
+.slide__right { 
+	width: 583px;
+	height: 697px;
+	display: flex;
+	flex-direction: column;
+	justify-content: center; 
+	margin-left: 22.5px;
+}
+
+img.slide__image {
+	width: 474px;
+	height: 697px;
+	display: flex;
+	object-fit: cover;
+	margin-right: 22.5px;
+	border-radius: 15px;
+}
+
+.slide__images {
+	width: 246px;
+	height: 697px;
+	display: flex;
+	justify-content: center;
+	flex-direction: column;
+	background: #fff;
+	border-radius: 15px;
+}
+
+.slide__images img {
+	width: 100%;
+	height: 100%;
+	object-fit: contain;
+}
+
+.slide__info {   
+	border: 0.75px solid #030303;
+	border-radius: 15px;
+	padding: 30px;
+	width: 583px;
+	height: 438px;
+}
+
+
+.slide__info img { 
+	margin-bottom: 30px; 
+	width: 138px;
+	height: 97px;
+}
+
+p.slide__price { 
+	font-weight: 400;
+	font-size: 30px;
+	line-height: 110%; 
+	
+	margin-top: 61.32px;
+}
+
+.slide__data {
+	display: flex;
+	background: #fff;
+	
+	border-radius: 15px;
+	padding: 30px;
+	width: 583px;
+	height: 236px;
+ 
+	margin-top: 22.5px;
+}
+
+
+.slide__materials { 
+	width: 239px;
+	height: 155px;
+	margin-right: 45px;
+}
+
+.slide__sizes { 
+	width: 239px;
+	height: 155px; 
+}
+
+.slide__materials h2, .slide__sizes h2 {
+	font-weight: 600;
+	font-size: 18px;
+	line-height: 140%;
+	text-transform: uppercase;  
+	
+	margin-bottom: 22.5px;
+}
+
+
+.slide__materials ul li {
+	margin-bottom: 12px;
+}
+
+.slide__sizes ul li {
+	margin-bottom: 1.5px;
+}
+
+.slide__materials h2 {
+	margin-left: 25.5px;
+}
+
+.slide__materials ul li, .slide__sizes ul li { 
+	font-weight: 400;
+	font-size: 18px;
+	line-height: 140%; 
+}
+
+
+
+.slide__materials ul li {
+	list-style: none; 
+}
+
+.slide__materials ul li::before {
+	content: '';
+	display: inline-block;
+	width: 18px;
+	height: 18px;
+	background-image: url("../images/marker.svg");
+	background-repeat: no-repeat;
+	background-size: contain;
+	margin-right: 7.5px;
+}
+
+.slide__contacts {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	height: 79px;  
+}
+ 
+
+
+.slide__contacts a {
+	font-weight: 600;
+	font-size: 28px;
+	line-height: 120%; 
+	transition: opacity 0.5s ease, transform 0.5s ease;
+	margin-right: 242.5px;
+}
+
+.slide__contacts a:last-child { 
+	margin-right: 0px;
+	margin-left: 185.5px;
+}
+.slide__contacts a:hover {
+	opacity: 0.5;
+	transform: scale(1.1);
+}
+
+a.slide__links {
+	font-size: 24px;
+	line-height: 120%; 
+	font-weight: 400; 
+	margin-right: 57px;  
+}
+
+
+
+.slide2 { 
+}
+
+.slide2__top { 
+	display: flex;
+	margin-bottom: 22.5px;
+}
+
+.slide2__bottom {  
+	display: flex;
+}
+
+img.slide2__image {
+	border-radius: 15px;
+	width: 853px;
+	height: 459px; 
+	object-fit: cover;
+	margin-right: 22.5px;
+}
+
+.slide2__images {
+	border-radius: 15px;
+	width: 583px;
+	height: 215px; 
+	display: flex; 
+	background: #fff; 
+}
+
+.slide2__images img {
+	width: 100%;
+	height: 100%; 
+	object-fit: contain;
+}
+
+.slide2__info {  
+	border: 0.75px solid #030303;
+	border-radius: 15px;
+	padding: 30px;
+	width: 474px;
+	height: 459px;
+	margin-right: 22.5px;
+}
+
+
+.slide2__info img {  
+	margin-bottom: 30px; 
+	width: 138px;
+	height: 97px;
+}
+
+p.slide2__price { 
+	font-weight: 400;
+	font-size: 30px;
+	line-height: 110%; 
+	
+	margin-top: 61.32px;
+}
+
+.slide2__data { 
+	display: flex;
+	background: #fff;
+	
+	border-radius: 15px;
+	padding: 30px;
+	width: 744px;
+	height: 215px;
+ 
+	margin-right: 22.5px;  
+}
+
+
+.slide2__materials {
+	width: 243px; 
+	margin-right: 75px;
+}
+
+.slide2__sizes {  
+	width: 230px;
+}
+
+.slide2__materials h2, .slide2__sizes h2 { 
+	font-weight: 600;
+	font-size: 18px;
+	line-height: 140%;
+	text-transform: uppercase;
+	margin-bottom: 22.5px; 
+}
+
+
+.slide2__materials h2 {
+	margin-left: 25.5px;
+}
+
+.slide2__materials ul li, .slide2__sizes ul li {
+	font-weight: 400;
+	font-size: 18px;
+	line-height: 140%; 
+}
+
+.slide2__materials ul li {
+	margin-bottom: 12px;
+}
+
+.slide2__sizes ul li {
+	margin-bottom: 1.5px;
+}
+
+
+
+.slid2e__materials ul li {
+	list-style: none; 
+}
+
+.slide2__materials ul li::before {
+	content: '';
+	display: inline-block;
+	height: 18px;
+	width: 18px;
+	background-image: url("../images/marker.svg");
+	background-repeat: no-repeat;
+	background-size: contain;
+	margin-right: 7.5px;
+}
+
+ 
+     </style>
+  </head>
+  <body>
+    <section class="slide">
+    	<div class="container">
+    		<div class="slide__wrapper">
+    			<div class="slide__left">
+    				
+                    <img src="http://127.0.0.1:8000{{ product.main_photo.url }}" alt="Основное фото" class="slide__image">
+    				<div class="slide__images">
+    					
+                        <img src="http://127.0.0.1:8000{{ product.additional_photo1.url }}" alt="Дополнительное фото 1">
+                        <img src="http://127.0.0.1:8000{{ product.additional_photo2.url }}" alt="Дополнительное фото 2">
+    				</div>
+    			</div>
+    			<div class="slide__right">
+    				<div class="slide__info"> 
+		    				<img src="images/logo.png">
+				    		<h2 class="title">Премиальный модульный лаундж <span class="bold">MAXIME</span></h2>
+				    		<p class="description">Колекция <span class="bold">MAXIME</span> – новинка сезона 2025 года,
+							безусловное сочетание комфорта, стиля, роскоши!</p>  
+		    				<p class="slide__price">ЦЕНА: <span class="bold">{{ product.price }} руб.</span></p>
+		    		</div>
+		    		<div class="slide__data">
+		    			<div class="slide__materials">
+		    				<h2>Материалы:</h2>
+		    				<ul>
+
+                                <li>{{ product.material }}</li>
+		    				</ul>
+		    			</div>
+		    			<div class="slide__sizes">
+		    				<h2>Размеры:</h2>
+		    				<ul>
+		    					<li> <span class="bold">{{product.dimensions}} см</span></li>
+		    				</ul>
+		    			</div>
+		    		</div>
+    			</div>
+    		</div>
+    		<div class="slide__contacts">
+    				<a href="tel:+74951912718">+7 (495) 191-27-18</a> 
+    				
+    					<a class="slide__links" href="https://www.mebel-altezza.ru" target="_blank">www.mebel-altezza.ru</a>
+    					<a class="slide__links" href="mailto:info@mebel-altezza.ru">info@mebel-altezza.ru</a>
+    				
+    				<a href="tel:+79267379775">+7 (926) 737-97-75</a>
+    		</div>
+    	</div>
+    </section>
+<!--     
+    <section class="slide2">
+    	<div class="container"> 
+    	
+    			<div class="slide2__top">
+    				<div class="slide2__info"> 
+		    				<img src="images/logo.png">
+				    		<h2 class="title">Премиальный модульный лаундж <span class="bold">MAXIME</span></h2>
+				    		<p class="description">Колекция <span class="bold">MAXIME</span> – новинка сезона 2025 года,
+							безусловное сочетание комфорта, стиля, роскоши!</p> 
+		    				<p class="slide2__price">ЦЕНА: <span class="bold">2 119 040,00 руб.</span></p>
+		    		</div>
+		    		
+					
+                    <img class="slide2__image" src="http://127.0.0.1:8000{{ product.main_photo.url }}">
+		    			
+		    		</div>
+    			
+    		
+    		
+    		<div class="slide2__bottom">
+    		
+    			<div class="slide2__data">
+		    			<div class="slide2__materials">
+		    				<h2>Материалы:</h2>
+		    				<ul>
+		    					<li>{{ product.material }}</li>
+		    					
+		    				</ul>
+		    			</div>
+		    			<div class="slide2__sizes">
+		    				<h2>Размеры:</h2>
+		    				<ul>
+		    					<li> <span class="bold">{{product.dimensions}} см</span></li>
+		    					
+		    				</ul>
+		    		</div>
+		    	</div>
+    		
+    		
+    				
+    				<div class="slide2__images">
+    					
+                        <img src="http://127.0.0.1:8000{{ product.additional_photo1.url }}">
+    					<img src="http://127.0.0.1:8000{{ product.additional_photo2.url }}">  
+    				</div>
+    			</div>
+    		
+    		<div class="slide__contacts">
+    				<a href="tel:+74951912718">+7 (495) 191-27-18</a>
+    				
+    				<a class="slide__links" href="https://www.mebel-altezza.ru" target="_blank">www.mebel-altezza.ru</a>
+    				<a class="slide__links" href="mailto:info@mebel-altezza.ru">info@mebel-altezza.ru</a>
+    				
+    				<a href="tel:+79267379775">+7 (926) 737-97-75</a>
+    		</div>
+    	</div>
+    </section> -->
+    
+  </body>
+</html>

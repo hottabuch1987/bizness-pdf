@@ -1,0 +1,133 @@
+
+
+<!DOCTYPE html>
+{% load static %}
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta charset="utf-8" /> 
+
+    <link rel="" href="{% static 'fonts/fonts.css'%} ">
+    
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+
+    <link rel="stylesheet" href="{% static 'css/mobile.css' %}">
+	<link rel="icon" href="{% static 'images/favicon.png' %}" type="image/x-icon">
+    <title>Altezza Outdoor Concept</title>
+	 <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@200..700&display=swap" rel="stylesheet">
+  </head>
+  <body>
+    <section class="slide">
+    	<div class="container">
+    		<div class="slide__wrapper">
+    			<div class="slide__left">
+    				
+                    <img src="http://127.0.0.1:8000{{ product.main_photo.url }}" alt="Основное фото" class="slide__image" >
+    				<div class="slide__images">
+    			
+                        <img src="http://127.0.0.1:8000{{ product.additional_photo1.url }}" alt="Дополнительное фото 1" class="photo-secondary">
+                        <img src="http://127.0.0.1:8000{{ product.additional_photo2.url }}" alt="Дополнительное фото 2" class="photo-secondary">
+    				</div>
+    			</div>
+    			<div class="slide__right">
+    				<div class="slide__info"> 
+		    				<img src="{% static 'images/logo.png' %}">
+				    		<h2 class="title">Премиальный модульный лаундж <span class="bold">MAXIME</span></h2>
+				    		<p class="description">Колекция <span class="bold">MAXIME</span> – новинка сезона 2025 года,
+							безусловное сочетание комфорта, стиля, роскоши!</p>  
+		    				<p class="slide__price">ЦЕНА: <span class="bold">{{ product.price }} руб.</span></p>
+		    		</div>
+		    		<div class="slide__data">
+		    			<div class="slide__materials">
+		    				<h2>Материалы:</h2>
+		    				<ul>
+		    					<li>{{ product.material }}</li>
+		    					
+		    				</ul>
+		    			</div>
+		    			<div class="slide__sizes">
+		    				<h2>Размеры:</h2>
+		    				<ul>
+		    					<li> <span class="bold">{{product.dimensions}} cm</span></li>
+		    					
+		    				</ul>
+		    			</div>
+		    		</div>
+    			</div>
+    		</div>
+    		<div class="slide__contacts">
+    				<a href="tel:+74951912718">+7 (495) 191-27-18</a> 
+    				
+    					<a class="slide__links" href="https://www.mebel-altezza.ru" target="_blank">www.mebel-altezza.ru</a>
+    					<a class="slide__links" href="mailto:info@mebel-altezza.ru">info@mebel-altezza.ru</a>
+    				
+    				<a href="tel:+79267379775">+7 (926) 737-97-75</a>
+    		</div>
+    	</div>
+    </section>
+    
+    <section class="slide2">
+    	<div class="container"> 
+    	
+    			<div class="slide2__top">
+    				<div class="slide2__info"> 
+		    				<img src="{% static 'images/logo.png' %}">
+                            
+				    		<h2 class="title">Премиальный модульный лаундж <span class="bold">MAXIME</span></h2>
+				    		<p class="description">Колекция <span class="bold">MAXIME</span> – новинка сезона 2025 года,
+							безусловное сочетание комфорта, стиля, роскоши!</p> 
+		    				<p class="slide2__price">ЦЕНА: <span class="bold">2 119 040,00 руб.</span></p>
+		    		</div>
+		    		
+					<img class="slide2__image" src="http://127.0.0.1:8000{{ product.main_photo.url }}">
+                   
+		    			
+		    		</div>
+    			
+    		
+    		
+    		<div class="slide2__bottom">
+    		
+    			<div class="slide2__data">
+		    			<div class="slide2__materials">
+		    				<h2>Материалы:</h2>
+		    				<ul>
+		    					<li>{{ product.material }}</li>
+		    					
+		    				</ul>
+		    			</div>
+		    			<div class="slide2__sizes">
+		    				<h2>Размеры:</h2>
+		    				<ul>
+                                <li> <span class="bold"></span>{{product.dimensions}} cm</span></li>
+		    					
+		    				</ul>
+		    		</div>
+		    	</div>
+    		
+    		
+    				
+    				<div class="slide2__images">
+    					<img src="http://127.0.0.1:8000{{ product.additional_photo1.url }}">
+    					<img src="http://127.0.0.1:8000{{ product.additional_photo2.url }}"> 
+
+                        
+    				</div>
+    			</div>
+    		
+    		<div class="slide__contacts">
+    				<a href="tel:+74951912718">+7 (495) 191-27-18</a>
+    				
+    				<a class="slide__links" href="https://www.mebel-altezza.ru" target="_blank">www.mebel-altezza.ru</a>
+    				<a class="slide__links" href="mailto:info@mebel-altezza.ru">info@mebel-altezza.ru</a>
+    				
+    				<a href="tel:+79267379775">+7 (926) 737-97-75</a>
+    		</div>
+    	</div>
+    </section>
+    
+  </body>
+</html>
+
+
+
