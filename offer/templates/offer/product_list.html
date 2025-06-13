@@ -43,7 +43,11 @@
                         <th>Цвет</th>
                         <th>Габариты</th>
                         <th class="text-nowrap">Фото</th>
+                        <th>
+                            Шаблоны   
+                        </th>
                         <th class="text-nowrap">Действия</th>
+                   
                     </tr>
                 </thead>
                 <tbody>
@@ -73,11 +77,24 @@
                                 <span class="text-muted">Нет фото</span>
                             {% endif %}
                         </td>
+                        <td>
+                            <div class="mb-4">
+                                <label class="form-check-label me-3">
+                                    <input type="radio" name="option_{{ product.id }}" value="option1" class="form-check-input" checked>
+                                    вариант 1
+                                </label>
+                                <label class="form-check-label">
+                                    <input type="radio" name="option_{{ product.id }}" value="option2" class="form-check-input">
+                                    вариант 2
+                                </label>
+                            </div>
+                        </td>
                         <td class="text-nowrap">
                             <a href="{% url 'edit_product' product.id %}" class="link-orange">
                                 <i class="fas fa-edit me-1"></i>изменить
                             </a>
                         </td>
+
                     </tr>
                     {% empty %}
                     <tr>

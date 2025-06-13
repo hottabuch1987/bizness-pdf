@@ -3,8 +3,7 @@ from django.db import models
 
 from django.template.loader import render_to_string
 from django.core.files.base import ContentFile
-from xhtml2pdf import pisa
-from io import BytesIO
+
 
 class Product(models.Model):
     article = models.CharField("Артикул", max_length=100, unique=True)  # Артикул
