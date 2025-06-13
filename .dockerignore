@@ -1,0 +1,10 @@
+*.pyc
+__pycache__
+.vscode
+.idea
+logs/
+debug.log
+tests/
+test_data/
+.git
+.svn

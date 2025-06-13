@@ -1,9 +1,17 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from .models import Product
 from .forms import UploadCSVForm, ProductForm
 from io import TextIOWrapper
 import csv
+
+from django.http import HttpResponse
+from django.template.loader import render_to_string
+from django.conf import settings
+import os
+from weasyprint import HTML
+from weasyprint.text.fonts import FontConfiguration
+
 
 def upload_csv(request):
     if request.method == 'POST':
@@ -81,8 +89,7 @@ def product_list(request):
     return render(request, 'offer/product_list.html', {'products': products})
 
 
-from django.shortcuts import render, redirect, get_object_or_404
-from .forms import ProductForm
+
 
 def edit_product(request, product_id):
     product = get_object_or_404(Product, id=product_id)
@@ -100,14 +107,7 @@ def edit_product(request, product_id):
         'product': product
     })
 
-from django.shortcuts import render, redirect
-from django.http import HttpResponse
-from .models import Product
-from reportlab.lib.pagesizes import letter
-from reportlab.pdfgen import canvas
-from reportlab.lib import colors
-from reportlab.platypus import Table, TableStyle
-from django.contrib import messages
+
 
 def convert_to_pdf(request):
     if request.method == 'POST':
@@ -119,51 +119,32 @@ def convert_to_pdf(request):
             
         products = Product.objects.filter(id__in=product_ids)
         
-        response = HttpResponse(content_type='application/pdf')
+        # Рендеринг HTML шаблона
+        html_string = render_to_string(
+            'offer/pdf_template.html',
+            {'products': products}
+        )
+        
+        # Настройки для WeasyPrint
+        font_config = FontConfiguration()
+        html = HTML(string=html_string, base_url=request.build_absolute_uri())
+        
+        # Генерация PDF
+        pdf_file = html.write_pdf(font_config=font_config)
+        
+        # Создание HTTP ответа
+        response = HttpResponse(pdf_file, content_type='application/pdf')
         response['Content-Disposition'] = 'attachment; filename="products_export.pdf"'
-
-        p = canvas.Canvas(response, pagesize=letter)
-        width, height = letter
-
-        # Заголовок PDF
-        p.setFont("Helvetica-Bold", 16)
-        p.drawString(100, height - 50, "Экспорт товаров")
-        p.setFont("Helvetica", 12)
-        p.drawString(100, height - 70, f"Всего товаров: {len(products)}")
-        
-        # Подготовка данных для таблицы
-        data = [['Артикул', 'Наименование', 'Цена', 'Остаток', 'Материал', 'Цвет']]
-        
-        for product in products:
-            data.append([
-                product.article,
-                product.name,
-                f"{product.price} ₽",
-                f"{product.stock} шт.",
-                product.material,
-                product.color
-            ])
-        
-        # Создание таблицы
-        table = Table(data)
-        table.setStyle(TableStyle([
-            ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor('#343a40')),
-            ('TEXTCOLOR', (0, 0), (-1, 0), colors.white),
-            ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
-            ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
-            ('FONTSIZE', (0, 0), (-1, 0), 12),
-            ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
-            ('BACKGROUND', (0, 1), (-1, -1), colors.HexColor('#f8f9fa')),
-            ('GRID', (0, 0), (-1, -1), 1, colors.HexColor('#dee2e6')),
-            ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
-        ]))
-        
-        # Размещение таблицы на странице
-        table.wrapOn(p, width - 100, height - 100)
-        table.drawOn(p, 50, height - 150 - len(products)*20)
-        
-        p.showPage()
-        p.save()
         return response
 
     return redirect('product_list')
+
+
+
+def simple_page(request):
+    product = Product.objects.first()
+   
+    context = {
+    'product': product
+    }
+    return render(request, 'offer/product.html', context)
