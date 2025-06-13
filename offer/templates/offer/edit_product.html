@@ -1,4 +1,5 @@
 {% extends 'offer/base.html' %}
+{% block title %} Редактирование  {% endblock %}
 
 {% block content %}
 <div class="container mt-4">
@@ -19,7 +20,7 @@
             
             <div class="d-flex justify-content-center gap-3">
                 <button type="submit" class="btn btn-primary px-4">Сохранить</button>
-                <a href="{% url 'product_list' %}" class="btn btn-outline-secondary px-4">Отмена</a>
+                <a href="{% url 'product_list' %}" class="btn btn-outline-secondary  px-4">Отмена</a>
             </div>
         </form>
     </div>
@@ -55,7 +56,7 @@
     }
 
     .card-body {
-        padding: 25px;
+        padding: 5px;
     }
 
     .card-title {
@@ -136,6 +137,8 @@
 
     .btn-outline-secondary {
         border: 2px solid #6c757d;
+        text-decoration: none;
+        color: #6c757d;
     }
 
     .btn:hover {

@@ -1,5 +1,5 @@
 {% extends 'offer/base.html' %}
-
+{% block title %} Главная {% endblock %}
 {% block content %}
 <div class="container mt-4">
     <form method="post" action="{% url 'convert_to_pdf' %}" id="pdf-form">
@@ -7,7 +7,7 @@
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h2 class="mb-0 text-orange">Список товаров</h2>
             <div>
-                <a href="{% url 'upload_csv' %}" class="btn btn-orange me-2">
+                <a href="{% url 'upload_csv' %}" class="link-orange">
                     <i class="fas fa-upload me-2"></i>Загрузить CSV
                 </a>
                 <button type="submit" class="btn btn-orange">

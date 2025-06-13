@@ -3,7 +3,8 @@ from django import forms
 
 
 class UploadCSVForm(forms.Form):
-    csv_file = forms.FileField(label='Выберите CSV файл')
+    csv_file = forms.FileField(label='Выберите CSV файл', widget=forms.ClearableFileInput(attrs={'class': 'form-control'}))
+
 
 
 class ProductForm(forms.ModelForm):
