@@ -89,8 +89,6 @@ def product_list(request):
     return render(request, 'offer/product_list.html', {'products': products})
 
 
-
-
 def edit_product(request, product_id):
     product = get_object_or_404(Product, id=product_id)
     if request.method == 'POST':
@@ -109,6 +107,10 @@ def edit_product(request, product_id):
 
 
 
+
+from weasyprint import HTML, CSS
+import tempfile
+
 def convert_to_pdf(request):
     if request.method == 'POST':
         product_ids = request.POST.getlist('product_ids')
@@ -119,27 +121,59 @@ def convert_to_pdf(request):
             
         products = Product.objects.filter(id__in=product_ids)
         
-        # Рендеринг HTML шаблона
-        html_string = render_to_string(
-            'offer/pdf_template.html',
-            {'products': products}
-        )
-        
-        # Настройки для WeasyPrint
-        font_config = FontConfiguration()
-        html = HTML(string=html_string, base_url=request.build_absolute_uri())
-        
-        # Генерация PDF
-        pdf_file = html.write_pdf(font_config=font_config)
-        
-        # Создание HTTP ответа
-        response = HttpResponse(pdf_file, content_type='application/pdf')
-        response['Content-Disposition'] = 'attachment; filename="products_export.pdf"'
-        return response
+        response = HttpResponse(content_type='application/pdf')
+        response['Content-Disposition'] = 'attachment; filename="products_catalog.pdf"'
+
+        # CSS для альбомной ориентации
+        landscape_css = CSS(string='''
+            @page {
+                size: A4 landscape;
+                margin: 1mm;
+            }
+            body {
+                width: 100%;
+                margin: 0;
+                padding: 0;
+            }
+        ''')
+
+        with tempfile.NamedTemporaryFile(suffix='.pdf') as output_file:
+            for i, product in enumerate(products):
+                html_string = render_to_string(
+                    'offer/product.html',
+                    {'product': product}
+                )
+                
+                # Добавляем разрыв страницы между товарами
+                if i > 0:
+                    html_string = f"<div style='page-break-before: always;'></div>{html_string}"
+                
+                html = HTML(
+                    string=html_string,
+                    base_url=request.build_absolute_uri('/')
+                )
+                
+                if i == 0:
+                    html.write_pdf(
+                        output_file,
+                        stylesheets=[landscape_css],
+                        presentational_hints=True
+                    )
+                else:
+                    with tempfile.NamedTemporaryFile(suffix='.pdf') as temp_pdf:
+                        html.write_pdf(
+                            temp_pdf,
+                            stylesheets=[landscape_css],
+                            presentational_hints=True
+                        )
+                        temp_pdf.seek(0)
+                        output_file.write(temp_pdf.read())
+            
+            output_file.seek(0)
+            response.write(output_file.read())
+            return response
 
     return redirect('product_list')
-
-
 
 def simple_page(request):
     product = Product.objects.first()
