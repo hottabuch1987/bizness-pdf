@@ -107,7 +107,12 @@ def edit_product(request, product_id):
         'product': product
     })
 
-
+def delete_products(request):
+    if request.method == 'POST':
+        product_ids = request.POST.getlist('product_ids')
+        Product.objects.filter(id__in=product_ids).delete()
+        return HttpResponse(status=200)
+    return HttpResponse(status=400)
 
 
 
