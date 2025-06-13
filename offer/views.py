@@ -5,12 +5,14 @@ from .forms import UploadCSVForm, ProductForm
 from io import TextIOWrapper
 import csv
 
+from weasyprint.text.fonts import FontConfiguration
+from weasyprint import HTML, CSS
+import tempfile
 from django.http import HttpResponse
 from django.template.loader import render_to_string
 from django.conf import settings
 import os
-from weasyprint import HTML
-from weasyprint.text.fonts import FontConfiguration
+
 
 
 def upload_csv(request):
@@ -108,8 +110,6 @@ def edit_product(request, product_id):
 
 
 
-from weasyprint import HTML, CSS
-import tempfile
 
 def convert_to_pdf(request):
     if request.method == 'POST':
