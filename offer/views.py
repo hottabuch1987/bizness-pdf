@@ -29,7 +29,6 @@ def convert_to_pdf(request):
     pdf.set_auto_page_break(auto=False, margin=0)
     
     # Настройка шрифтов
-    #font_path = os.path.join(settings.STATIC_ROOT, 'DejaVuSansCondensed-Bold.ttf')
     font_path = os.path.join(settings.STATIC_ROOT, 'dejavu-fonts-ttf/ttf/DejaVuSansCondensed-Bold.ttf')
     pdf.add_font('DejaVu', '', font_path, uni=True)
 
@@ -46,6 +45,40 @@ def convert_to_pdf(request):
             image = image.convert('RGBA')
         image.putalpha(mask)
         return image
+
+    # Функция для обрезки изображения по принципу "cover"
+    def resize_and_crop_cover(img, target_width, target_height):
+        """
+        Масштабирует и обрезает изображение для заполнения целевой области
+        без искажения пропорций (аналог background-size: cover)
+        """
+        if target_width <= 0 or target_height <= 0:
+            return img
+
+        # Рассчитываем соотношения сторон
+        img_ratio = img.width / img.height
+        target_ratio = target_width / target_height
+
+        # Определяем новые размеры для масштабирования
+        if img_ratio > target_ratio:
+            # Подгоняем по высоте -> ширина станет больше целевой
+            new_height = target_height
+            new_width = int(img.width * new_height / img.height)
+        else:
+            # Подгоняем по ширине -> высота станет больше целевой
+            new_width = target_width
+            new_height = int(img.height * new_width / img.width)
+
+        # Масштабируем
+        img = img.resize((new_width, new_height), Image.LANCZOS)
+        
+        # Центрируем и обрезаем
+        left = (new_width - target_width) // 2
+        top = (new_height - target_height) // 2
+        right = left + target_width
+        bottom = top + target_height
+        
+        return img.crop((left, top, right, bottom))
 
     with tempfile.TemporaryDirectory() as temp_dir:
         for product_id in selected_ids:
@@ -64,39 +97,36 @@ def convert_to_pdf(request):
                     
                     # Обработка главного изображения
                     with Image.open(product.main_photo.path) as product_img:
-                        # Конвертация и скругление углов
-                        if product_img.mode == 'RGBA':
-                            product_img = add_rounded_corners(product_img)
-                        else:
+                        # Конвертация
+                        if product_img.mode != 'RGBA':
                             product_img = product_img.convert('RGBA')
-                            product_img = add_rounded_corners(product_img)
+                        
+                        # Инициализация переменных ДО условных блоков
+                        target_width = 0
+                        target_height = 0
+                        position = (0, 0)
                         
                         # Жесткое задание размеров для разных вариантов
                         if option == "option1":
-                            # Жесткие размеры: 70% ширины и 50% высоты фона
                             target_width = int(bg_width * 0.29) + 80
                             target_height = int(bg_height * 0.8) + 40
-                            
-                            # Растягивание до точных размеров
-                            product_img = product_img.resize((target_width, target_height), Image.LANCZOS)
-                            
-                            # Позиционирование
                             position = (
-                                (bg_width - target_width) // 2 - 470,  # Центр по X
-                                int(bg_height * 0.075)             # 5% от высоты сверху
+                                (bg_width - target_width) // 2 - 470,
+                                int(bg_height * 0.075)
                             )
                         else:  # option2
-                            # Жесткие размеры: 50% ширины и 70% высоты фона
                             target_width = int(bg_width * 0.5) + 150
                             target_height = int(bg_height * 0.57)
-                            
-                            # Растягивание до точных размеров
-                            product_img = product_img.resize((target_width, target_height), Image.LANCZOS)
-                            
                             position = (
-                                bg_width - target_width - 35,  # Справа с отступом
-                                (bg_height - target_height) - 330  # Центр по Y
+                                bg_width - target_width - 35,
+                                (bg_height - target_height) - 330
                             )
+                        
+                        # Обрезаем и масштабируем
+                        product_img = resize_and_crop_cover(product_img, target_width, target_height)
+                        
+                        # Скругляем углы ПОСЛЕ обрезки
+                        product_img = add_rounded_corners(product_img)
                         
                         # Наложение на фон
                         bg.paste(product_img, position, product_img)
@@ -124,19 +154,23 @@ def convert_to_pdf(request):
                                     with Image.open(photo_path) as img:
                                         if img.mode != 'RGBA':
                                             img = img.convert('RGBA')
-                                        img = add_rounded_corners(img, radius=15)
                                         
-                                        # Растягивание до точных размеров
-                                        img = img.resize((photo_width, photo_height), Image.LANCZOS)
+                                        # Инициализация размеров для дополнительных фото
+                                        img_target_width = photo_width
+                                        img_target_height = photo_height
+                                        
+                                        # Обрезаем и масштабируем
+                                        img = resize_and_crop_cover(img, img_target_width, img_target_height)
+                                        
+                                        # Скругляем углы
+                                        img = add_rounded_corners(img, radius=15)
                                         
                                         # Позиционирование
                                         x_pos = sidebar_x
                                         bg.paste(img, (x_pos, y_pos), img)
                                         
-                                        y_pos += photo_height + margin_y - 30
+                                        y_pos += img_target_height + margin_y - 30
 
-                            #
-                            
                         elif option == "option2":
                             additional_photos = []
                             if product.additional_photo1 and os.path.exists(product.additional_photo1.path):
@@ -161,16 +195,22 @@ def convert_to_pdf(request):
                                     with Image.open(photo_path) as img:
                                         if img.mode != 'RGBA':
                                             img = img.convert('RGBA')
-                                        img = add_rounded_corners(img, radius=15)
                                         
-                                        # Растягивание до точных размеров
-                                        img = img.resize((photo_width, photo_height), Image.LANCZOS)
+                                        # Инициализация размеров
+                                        img_target_width = photo_width
+                                        img_target_height = photo_height
+                                        
+                                        # Обрезаем и масштабируем
+                                        img = resize_and_crop_cover(img, img_target_width, img_target_height)
+                                        
+                                        # Скругляем углы
+                                        img = add_rounded_corners(img, radius=15)
                                         
                                         # Позиционирование
                                         y_pos = footer_y  
                                         bg.paste(img, (x_pos, y_pos), img)
                                         
-                                        x_pos += photo_width + margin_x 
+                                        x_pos += img_target_width + margin_x 
                             
                         # Сохраняем временное изображение
                         temp_img = os.path.join(temp_dir, f'comp_{product_id}.jpg')
@@ -178,7 +218,7 @@ def convert_to_pdf(request):
                 
                 # Добавляем страницу в PDF
                 pdf.add_page()
-                
+               
                 # Фоновое изображение (на всю страницу)
                 pdf.image(temp_img, x=0, y=0, w=297, h=210)
                 
@@ -209,7 +249,7 @@ def convert_to_pdf(request):
                         y_pos += 8
                     
                     pdf.set_xy(100, 150)
-                    pdf.cell(297, 10, f" {product.dimensions}", align='C', ln=True)
+                    pdf.cell(287, 10, f" {product.dimensions}", align='C', ln=True)
                 else:
                     # Вариант 2: текст слева
                     pdf.set_font('DejaVu', '', 10)
@@ -228,12 +268,29 @@ def convert_to_pdf(request):
                     for material in materials:
                         material = material.strip()
                         pdf.set_xy(20, y_pos)
-                        pdf.cell(40, 0, material, align='C', ln=True)
+                        pdf.cell(32, 0, material, align='C', ln=True)
                         y_pos += 8
                     
                     pdf.set_xy(85, 150)
-                    pdf.cell(297, 10, f"{product.dimensions}", ln=True)
-                        
+                    pdf.cell(287, 20, f"{product.dimensions}", ln=True)
+                
+                # Добавляем контактную информацию
+                pdf.set_font('DejaVu', '', 14)
+                pdf.set_text_color(0, 0, 0)
+                pdf.set_xy(0, 200)
+                phone_number1 = "+74951912718"
+                pdf.cell(75, 0, phone_number1, link=f"tel:{phone_number1}", align='C', ln=True)
+
+                pdf.set_xy(220, 200)
+                phone_number2 = "+79627379775"
+                pdf.cell(55, 0, phone_number2, link=f"tel:{phone_number2}", align='C', ln=True)
+
+                pdf.set_xy(90, 200)
+                pdf.cell(0, 0, "www.mebel-altezza.ru", ln=1, link="https://mebel-altezza.ru/")
+                pdf.set_xy(160, 200)
+                pdf.cell(0, 0, "info@mebel-altezza.ru", ln=1, link="mailto:info@mebel-altezza.ru")
+                  
+                      
             except Exception as e:
                 print(f"Ошибка обработки товара {product_id}: {e}")
                 continue
@@ -244,8 +301,7 @@ def convert_to_pdf(request):
         pdf_output = pdf.output(dest='S').encode('latin1')
         response.write(pdf_output)
         return response
-
-
+    
 def upload_csv(request):
     if request.method == 'POST':
         form = UploadCSVForm(request.POST, request.FILES)
