@@ -18,7 +18,7 @@ from django.contrib import admin
 from django.urls import path
 from django.conf import settings
 from django.conf.urls.static import static
-from offer.views import upload_csv, product_list, edit_product, convert_to_pdf, simple_page, delete_products
+from offer.views import upload_csv, product_list, edit_product, convert_to_pdf, delete_products
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -27,7 +27,7 @@ urlpatterns = [
     path('edit/<int:product_id>/', edit_product, name='edit_product'),  
     path('delete-products/', delete_products, name='delete_products'),
     path('convert_to_pdf/', convert_to_pdf, name='convert_to_pdf'),
-    path('product/', simple_page, name='simple_page'),
+ 
 
 ]
 

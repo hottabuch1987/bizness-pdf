@@ -5,7 +5,6 @@ from .forms import UploadCSVForm, ProductForm
 from io import TextIOWrapper
 import csv
 
-
 from django.http import HttpResponse
 from django.conf import settings
 from django.shortcuts import get_object_or_404, redirect
@@ -14,6 +13,7 @@ from fpdf import FPDF
 from PIL import Image
 import os
 import tempfile
+
 
 def convert_to_pdf(request):
     if request.method != 'POST':
@@ -29,7 +29,9 @@ def convert_to_pdf(request):
     pdf.set_auto_page_break(auto=False, margin=0)
     
     # Настройка шрифтов
-    pdf.add_font('DejaVu', '', '/Users/hottabuch/PycharmProjects/business_offer/business/static/dejavu-fonts-ttf/ttf/DejaVuSansCondensed-Bold.ttf', uni=True)
+    #font_path = os.path.join(settings.STATIC_ROOT, 'DejaVuSansCondensed-Bold.ttf')
+    font_path = os.path.join(settings.STATIC_ROOT, 'dejavu-fonts-ttf/ttf/DejaVuSansCondensed-Bold.ttf')
+    pdf.add_font('DejaVu', '', font_path, uni=True)
 
     background1_path = os.path.join(settings.BASE_DIR, 'img1.jpg')  # Для option1
     background2_path = os.path.join(settings.BASE_DIR, 'img2.jpg')  # Для option2
@@ -187,11 +189,11 @@ def convert_to_pdf(request):
                 # Различное позиционирование текста
                 if option == 'option1':
                     # Вариант 1: текст по центру
-                    pdf.set_font('DejaVu', '', 12)
-                    pdf.set_xy(50, 40)
-                    pdf.cell(297, 15, product.name.upper(), align='C', ln=True)
+                    pdf.set_font('DejaVu', '', 10)
+                    pdf.set_xy(70, 40)
+                    pdf.cell(287, 15, product.name.upper(), align='C', ln=True)
                     
-                    pdf.set_font('DejaVu', '', 18)
+                    pdf.set_font('DejaVu', '', 20)
                     pdf.set_text_color(220, 50, 50)
                     pdf.set_xy(80, 104)
                     pdf.cell(297, 20, price_str, align='C', ln=True)
@@ -202,7 +204,7 @@ def convert_to_pdf(request):
                     y_pos = 150
                     for material in materials:
                         material = material.strip()
-                        pdf.set_xy(45, y_pos)
+                        pdf.set_xy(47, y_pos)
                         pdf.cell(297, 10, material, align='C', ln=True)
                         y_pos += 8
                     
@@ -210,14 +212,14 @@ def convert_to_pdf(request):
                     pdf.cell(297, 10, f" {product.dimensions}", align='C', ln=True)
                 else:
                     # Вариант 2: текст слева
-                    pdf.set_font('DejaVu', '', 12)
+                    pdf.set_font('DejaVu', '', 10)
                     pdf.set_xy(20, 40)
-                    pdf.cell(150, 15, product.name.upper(), ln=True)
+                    pdf.cell(170, 15, product.name.upper(), ln=True)
                     
-                    pdf.set_font('DejaVu', '', 18)
+                    pdf.set_font('DejaVu', '', 20)
                     pdf.set_text_color(220, 50, 50)
-                    pdf.set_xy(50, 108)
-                    pdf.cell(150, 20, price_str, ln=True)
+                    pdf.set_xy(40, 108)
+                    pdf.cell(200, 20, price_str, ln=True)
                     pdf.set_text_color(0, 0, 0)
                     
                     pdf.set_font('DejaVu', '', 12)
@@ -225,7 +227,7 @@ def convert_to_pdf(request):
                     y_pos = 160
                     for material in materials:
                         material = material.strip()
-                        pdf.set_xy(17, y_pos)
+                        pdf.set_xy(20, y_pos)
                         pdf.cell(40, 0, material, align='C', ln=True)
                         y_pos += 8
                     
@@ -242,6 +244,7 @@ def convert_to_pdf(request):
         pdf_output = pdf.output(dest='S').encode('latin1')
         response.write(pdf_output)
         return response
+
 
 def upload_csv(request):
     if request.method == 'POST':
@@ -335,6 +338,7 @@ def edit_product(request, product_id):
         'product': product
     })
 
+
 def delete_products(request):
     if request.method == 'POST':
         product_ids = request.POST.getlist('product_ids')
@@ -342,12 +346,3 @@ def delete_products(request):
         return HttpResponse(status=200)
     return HttpResponse(status=400)
 
-
-
-def simple_page(request):
-    product = Product.objects.first()
-   
-    context = {
-    'product': product
-    }
-    return render(request, 'offer/product.html', context)

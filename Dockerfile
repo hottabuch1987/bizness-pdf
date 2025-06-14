@@ -1,46 +1,37 @@
 FROM python:3.9-alpine
 
+# Устанавливаем рабочую директорию
 WORKDIR /usr/src/app
 
-# переменные окружения для python
-ENV PYTHONDONTWRITEBYTECODE 1
-ENV PYTHONUNBUFFERED 1
+# Переменные окружения для Python
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1
 
-# Устанавливаем зависимости для Postgre
-
+# Устанавливаем зависимости для PostgreSQL и шрифтов
 RUN apk update && \
     apk add --no-cache \
-    weasyprint \
     postgresql-dev \
     gcc \
     python3-dev \
     musl-dev \
     fontconfig \
-    ttf-dejavu \
-    glib-dev \
-    gobject-introspection-dev
+    ttf-dejavu
 
-
-RUN apk add --no-cache \
-    cairo-dev \
-    pango-dev \
-    libffi-dev
-# устанавливаем зависимости
-RUN pip install --upgrade pip
+# Обновляем pip и устанавливаем зависимости из requirements.txt
 COPY ./requirements.txt .
-RUN pip install -r requirements.txt
+RUN pip install --upgrade pip && \
+    pip install -r requirements.txt
 
 # Копируем проект и скрипт в контейнер
 COPY . .
-COPY entrypoint.sh /usr/src/app/entrypoint.sh
 
-# Делаем скрипт исполняемым
+# Копируем и делаем исполняемым скрипт entrypoint
+COPY entrypoint.sh /usr/src/app/entrypoint.sh
 RUN chmod +x /usr/src/app/entrypoint.sh
 
+# Создаем директории для статических и медиа файлов
 RUN mkdir -p /usr/src/app/static /usr/src/app/media && \
-     chmod -R 755 /usr/src/app/static /usr/src/app/media
-
+    chmod -R 755 /usr/src/app/static /usr/src/app/media
 
 # Устанавливаем точку входа
 ENTRYPOINT ["sh", "/usr/src/app/entrypoint.sh"]
-
