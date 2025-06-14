@@ -72,7 +72,7 @@ def convert_to_pdf(request):
                         # Жесткое задание размеров для разных вариантов
                         if option == "option1":
                             # Жесткие размеры: 70% ширины и 50% высоты фона
-                            target_width = int(bg_width * 0.3) + 100
+                            target_width = int(bg_width * 0.29) + 80
                             target_height = int(bg_height * 0.8) + 40
                             
                             # Растягивание до точных размеров
@@ -80,8 +80,8 @@ def convert_to_pdf(request):
                             
                             # Позиционирование
                             position = (
-                                (bg_width - target_width) // 2 - 500,  # Центр по X
-                                int(bg_height * 0.07)             # 5% от высоты сверху
+                                (bg_width - target_width) // 2 - 470,  # Центр по X
+                                int(bg_height * 0.075)             # 5% от высоты сверху
                             )
                         else:  # option2
                             # Жесткие размеры: 50% ширины и 70% высоты фона
@@ -92,7 +92,7 @@ def convert_to_pdf(request):
                             product_img = product_img.resize((target_width, target_height), Image.LANCZOS)
                             
                             position = (
-                                bg_width - target_width - 25,  # Справа с отступом
+                                bg_width - target_width - 35,  # Справа с отступом
                                 (bg_height - target_height) - 330  # Центр по Y
                             )
                         
