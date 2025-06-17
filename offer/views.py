@@ -100,20 +100,12 @@ def convert_to_pdf(request):
                         # Конвертация
                         if product_img.mode != 'RGBA':
                             product_img = product_img.convert('RGBA')
-                        
-                        # Инициализация переменных ДО условных блоков
-                        target_width = 0
-                        target_height = 0
-                        position = (0, 0)
-                        
+
                         # Жесткое задание размеров для разных вариантов
                         if option == "option1":
-                            target_width = int(bg_width * 0.29) + 80
-                            target_height = int(bg_height * 0.8) + 40
-                            position = (
-                                (bg_width - target_width) // 2 - 470,
-                                int(bg_height * 0.075)
-                            )
+                            target_width = 1118
+                            target_height = 2079
+                            position = (124, 125)
                         else:  # option2
                             target_width = int(bg_width * 0.5) + 150
                             target_height = int(bg_height * 0.57)
@@ -140,16 +132,14 @@ def convert_to_pdf(request):
                                 additional_photos.append(product.additional_photo2.path)
                                 
                             if additional_photos:
-                                sidebar_width = int(bg_width * 0.18)
-                                sidebar_x = int(bg_width * 0.38)
-                                content_y = int(bg_height * 0.07)
-                                
                                 # Жесткие размеры для дополнительных фото
-                                photo_height = int(bg_height * 0.30) + 115
-                                photo_width = sidebar_width
-                                margin_y = 25
-                                
-                                y_pos = content_y
+                                photo_height = 1040
+                                photo_width = 604
+                                margin_y = 30
+
+                                x_pos = 1309
+                                y_pos = 125
+
                                 for photo_path in additional_photos:
                                     with Image.open(photo_path) as img:
                                         if img.mode != 'RGBA':
@@ -164,9 +154,7 @@ def convert_to_pdf(request):
                                         
                                         # Скругляем углы
                                         img = add_rounded_corners(img, radius=15)
-                                        
-                                        # Позиционирование
-                                        x_pos = sidebar_x
+
                                         bg.paste(img, (x_pos, y_pos), img)
                                         
                                         y_pos += img_target_height + margin_y - 30
@@ -179,9 +167,9 @@ def convert_to_pdf(request):
                                 additional_photos.append(product.additional_photo2.path)
                                 
                             if additional_photos:
-                                footer_height = int(bg_height * 0.34) 
+                                footer_height = int(bg_height * 0.34)
                                 footer_y = bg_height - footer_height
-                                total_width = bg_width 
+                                total_width = bg_width
                                 num_photos = len(additional_photos)
                                 margin_x = 0
                                 margin_y = 35
@@ -207,12 +195,12 @@ def convert_to_pdf(request):
                                         img = add_rounded_corners(img, radius=15)
                                         
                                         # Позиционирование
-                                        y_pos = footer_y  
+                                        y_pos = footer_y
                                         bg.paste(img, (x_pos, y_pos), img)
-                                        
-                                        x_pos += img_target_width + margin_x 
-                            
-                        # Сохраняем временное изображение
+
+                                        x_pos += img_target_width + margin_x
+
+                                        # Сохраняем временное изображение
                         temp_img = os.path.join(temp_dir, f'comp_{product_id}.jpg')
                         bg.convert('RGB').save(temp_img, quality=95)
                 
