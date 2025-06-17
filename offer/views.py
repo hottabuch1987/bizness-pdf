@@ -29,14 +29,14 @@ def convert_to_pdf(request):
     pdf.set_auto_page_break(auto=False, margin=0)
     
     # Настройка шрифтов
-    font_path = os.path.join(settings.STATIC_ROOT, 'dejavu-fonts-ttf/ttf/DejaVuSansCondensed-Bold.ttf')
+    font_path = os.path.join(settings.BASE_DIR, 'static', 'ofont.ru_Plumb.ttf')
     pdf.add_font('DejaVu', '', font_path, uni=True)
 
     background1_path = os.path.join(settings.BASE_DIR, 'img1.jpg')  # Для option1
     background2_path = os.path.join(settings.BASE_DIR, 'img2.jpg')  # Для option2
     
     # Функция для скругления углов
-    def add_rounded_corners(image, radius=20):
+    def add_rounded_corners(image, radius=37):
         from PIL import ImageDraw
         mask = Image.new('L', image.size, 0)
         draw = ImageDraw.Draw(mask)
@@ -135,7 +135,6 @@ def convert_to_pdf(request):
                                 # Жесткие размеры для дополнительных фото
                                 photo_height = 1040
                                 photo_width = 604
-                                margin_y = 30
 
                                 x_pos = 1309
                                 y_pos = 125
@@ -157,7 +156,7 @@ def convert_to_pdf(request):
 
                                         bg.paste(img, (x_pos, y_pos), img)
                                         
-                                        y_pos += img_target_height + margin_y - 30
+                                        y_pos += img_target_height
 
                         elif option == "option2":
                             additional_photos = []
