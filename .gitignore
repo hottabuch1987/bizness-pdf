@@ -165,3 +165,5 @@ presence_indo.csv
 product_pdfs/
 img.jpg
 media/
+/static/
+static/
