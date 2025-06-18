@@ -205,9 +205,9 @@ def convert_to_pdf(request):
                 # Различное позиционирование текста
                 if option == 'option1':
                     # Вариант 1: текст по центру
-                    pdf.set_font('DejaVu', '', 10)
-                    pdf.set_xy(70, 40)
-                    pdf.cell(287, 15, product.name.upper(), align='C', ln=True)
+                    pdf.set_font('DejaVu', '', 14)
+                    pdf.set_xy(150, 40)
+                    pdf.cell(0, 0, product.name.upper(), align='C', ln=True)
                     
                     pdf.set_font('DejaVu', '', 24)
                     pdf.set_text_color(0, 0, 0)
@@ -220,22 +220,26 @@ def convert_to_pdf(request):
                     y_pos = 150
                     for material in materials:
                         material = material.strip()
-                        pdf.set_xy(47, y_pos)
-                        pdf.cell(297, 10, material, align='C', ln=True)
+                        pdf.set_xy(90, y_pos)
+                        pdf.cell(0, 0, material, align='C', ln=True)
                         y_pos += 8
                     
-                    pdf.set_xy(100, 150)
-                    pdf.cell(287, 10, f" {product.dimensions}", align='C', ln=True)
+                    pdf.set_xy(190, 150)
+                    pdf.cell(0, 0, f" {product.dimensions}", align='C', ln=True)
+                    if product.description:
+                        pdf.set_font('DejaVu', '', 14)
+                        pdf.set_xy(50, 50)
+                        pdf.multi_cell(287, 5, product.description, align='C')
                 else:
                     # Вариант 2: текст слева
-                    pdf.set_font('DejaVu', '', 10)
+                    pdf.set_font('DejaVu', '', 14)
                     pdf.set_xy(20, 40)
-                    pdf.cell(170, 15, product.name.upper(), ln=True)
+                    pdf.cell(170, 0, product.name.upper(), ln=True)
                     
                     pdf.set_font('DejaVu', '', 24)
                     pdf.set_text_color(0, 0, 0)
                     pdf.set_xy(35, 101)
-                    pdf.cell(200, 20, price_str, ln=True)
+                    pdf.cell(200, 18, price_str, ln=True)
                     pdf.set_text_color(0, 0, 0)
                     
                     pdf.set_font('DejaVu', '', 12)
@@ -243,12 +247,18 @@ def convert_to_pdf(request):
                     y_pos = 160
                     for material in materials:
                         material = material.strip()
-                        pdf.set_xy(20, y_pos)
+                        pdf.set_xy(15, 150)
                         pdf.cell(32, 0, material, align='C', ln=True)
                         y_pos += 8
                     
-                    pdf.set_xy(85, 150)
-                    pdf.cell(287, 20, f"{product.dimensions}", ln=True)
+                    pdf.set_xy(75, 150)
+                    pdf.cell(0, 0, f"{product.dimensions}", ln=True)
+
+                    if product.description:
+                        pdf.set_font('DejaVu', '', 14)
+                        pdf.set_xy(20, 50)
+                        pdf.multi_cell(170, 5, product.description, align='L')
+                
                 
                 # Добавляем контактную информацию
                 pdf.set_font('DejaVu', '', 14)
@@ -319,6 +329,7 @@ def upload_csv(request):
                             'material': row['Материал'],
                             'color': row['Цвет'],
                             'dimensions': row.get('Габариты', ''),
+                            'description': row.get('Описание', ''),
                         }
                         
                         # Создание или обновление продукта

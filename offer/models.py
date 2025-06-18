@@ -16,7 +16,7 @@ class Product(models.Model):
     main_photo = models.ImageField("Главное фото", upload_to='products/main/')  # Главное фото
     additional_photo1 = models.ImageField("Доп. фото №1", upload_to='products/additional/')  # Доп. фото 1
     additional_photo2 = models.ImageField("Доп. фото №2", upload_to='products/additional/')  # Доп. фото 2
-    
+    description = models.TextField("Описание", blank=True, null=True)  # Описание
     
     @property
     def image_url(self):
