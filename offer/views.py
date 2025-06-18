@@ -107,13 +107,9 @@ def convert_to_pdf(request):
                             target_height = 2079
                             position = (124, 125)
                         else:  # option2
-                            target_width = int(bg_width * 0.5) + 150
-                            target_height = int(bg_height * 0.57)
-                            position = (
-                                bg_width - target_width - 35,
-                                (bg_height - target_height) - 330
-                            )
-                        
+                            target_width = 1970
+                            target_height = 1320
+                            position = (1395, 120)
                         # Обрезаем и масштабируем
                         product_img = resize_and_crop_cover(product_img, target_width, target_height)
                         
@@ -158,46 +154,39 @@ def convert_to_pdf(request):
                                         
                                         y_pos += img_target_height
 
-                        elif option == "option2":
+                        if option == "option2":
                             additional_photos = []
                             if product.additional_photo1 and os.path.exists(product.additional_photo1.path):
                                 additional_photos.append(product.additional_photo1.path)
                             if product.additional_photo2 and os.path.exists(product.additional_photo2.path):
                                 additional_photos.append(product.additional_photo2.path)
-                                
+                            
                             if additional_photos:
-                                footer_height = int(bg_height * 0.34)
-                                footer_y = bg_height - footer_height
-                                total_width = bg_width
-                                num_photos = len(additional_photos)
-                                margin_x = 0
-                                margin_y = 35
+                                # Определяем размеры для горизонтального расположения
+                                photo_height = 700
+                                photo_width = 700
                                 
-                                # Жесткие размеры для дополнительных фото
-                                photo_width = ((total_width - (num_photos) * margin_x) // num_photos) - 420
-                                photo_height = footer_height - 2 * margin_y
-                                
-                                x_pos = margin_x + 790
+                                x_pos = 1970
+                                y_pos = 1500
+                                # Рассчитываем доступную ширину для размещения изображений
+ 
+                                    # Располагаем изображения горизонтально
                                 for photo_path in additional_photos:
                                     with Image.open(photo_path) as img:
                                         if img.mode != 'RGBA':
                                             img = img.convert('RGBA')
-                                        
-                                        # Инициализация размеров
-                                        img_target_width = photo_width
-                                        img_target_height = photo_height
-                                        
-                                        # Обрезаем и масштабируем
-                                        img = resize_and_crop_cover(img, img_target_width, img_target_height)
-                                        
-                                        # Скругляем углы
+                                            
+                                            # Обрезаем и масштабируем
+                                        img = resize_and_crop_cover(img, photo_width, photo_height)
+                                            
+                                            # Скругляем углы
                                         img = add_rounded_corners(img, radius=15)
-                                        
-                                        # Позиционирование
-                                        y_pos = footer_y
+                                            
+                                            # Вставляем изображение
                                         bg.paste(img, (x_pos, y_pos), img)
-
-                                        x_pos += img_target_width + margin_x
+                                            
+                                            # Сдвигаем позицию для следующего изображения
+                                        x_pos += photo_width   # отступ между изображениями
 
                                         # Сохраняем временное изображение
                         temp_img = os.path.join(temp_dir, f'comp_{product_id}.jpg')
@@ -220,10 +209,10 @@ def convert_to_pdf(request):
                     pdf.set_xy(70, 40)
                     pdf.cell(287, 15, product.name.upper(), align='C', ln=True)
                     
-                    pdf.set_font('DejaVu', '', 20)
-                    pdf.set_text_color(220, 50, 50)
-                    pdf.set_xy(80, 104)
-                    pdf.cell(297, 20, price_str, align='C', ln=True)
+                    pdf.set_font('DejaVu', '', 24)
+                    pdf.set_text_color(0, 0, 0)
+                    pdf.set_xy(120, 110)
+                    pdf.cell(0, 0, price_str, align='C', ln=True)
                     pdf.set_text_color(0, 0, 0)
                     
                     pdf.set_font('DejaVu', '', 12)
@@ -243,9 +232,9 @@ def convert_to_pdf(request):
                     pdf.set_xy(20, 40)
                     pdf.cell(170, 15, product.name.upper(), ln=True)
                     
-                    pdf.set_font('DejaVu', '', 20)
-                    pdf.set_text_color(220, 50, 50)
-                    pdf.set_xy(40, 108)
+                    pdf.set_font('DejaVu', '', 24)
+                    pdf.set_text_color(0, 0, 0)
+                    pdf.set_xy(35, 101)
                     pdf.cell(200, 20, price_str, ln=True)
                     pdf.set_text_color(0, 0, 0)
                     
