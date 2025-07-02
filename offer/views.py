@@ -13,7 +13,11 @@ from fpdf import FPDF
 from PIL import Image
 import os
 import tempfile
-
+from io import TextIOWrapper
+import csv
+from django.contrib import messages
+from django.shortcuts import render, redirect
+from .models import Product, Material, Dimensions, ProductMaterial, ProductDimensions
 
 def convert_to_pdf(request):
     if request.method != 'POST':
@@ -31,7 +35,8 @@ def convert_to_pdf(request):
     # Настройка шрифтов
     font_path = os.path.join(settings.BASE_DIR, 'static', 'ofont.ru_Plumb.ttf')
     pdf.add_font('DejaVu', '', font_path, uni=True)
-
+    font_path_bild = os.path.join(settings.BASE_DIR, 'static', 'ofont.ru_Farabee.ttf')
+    pdf.add_font('DejaVu', 'B', font_path_bild, uni=True)
     background1_path = os.path.join(settings.BASE_DIR, 'img1.jpg')  # Для option1
     background2_path = os.path.join(settings.BASE_DIR, 'img2.jpg')  # Для option2
     
@@ -83,6 +88,7 @@ def convert_to_pdf(request):
     with tempfile.TemporaryDirectory() as temp_dir:
         for product_id in selected_ids:
             product = get_object_or_404(Product, id=product_id)
+            print(product)
             if not product.main_photo:
                 continue
                 
@@ -121,6 +127,7 @@ def convert_to_pdf(request):
                         
                         # Обработка дополнительных изображений
                         additional_photos = []
+                        
                         if option == "option1":
                             if product.additional_photo1 and os.path.exists(product.additional_photo1.path):
                                 additional_photos.append(product.additional_photo1.path)
@@ -201,67 +208,87 @@ def convert_to_pdf(request):
                 # Форматирование цены
                 price_value = product.price
                 price_str = f"{price_value:,.2f}".replace(',', ' ').replace('.', ',') + " руб."
-                
+
+                # Форматируем материалы и размеры с переносами строк
+         
+                materials_str = ','.join([m.name for m in product.materials.all()]).replace(',', '\n')
+                dimensions_name_str = ','.join([d.name for d in product.dimensions.all()]).replace(',', '\n')
+                dimensions_str = ','.join([d.size for d in product.dimensions.all()]).replace(',', '\n')
+
                 # Различное позиционирование текста
                 if option == 'option1':
                     # Вариант 1: текст по центру
-                    pdf.set_font('DejaVu', '', 14)
-                    pdf.set_xy(150, 40)
-                    pdf.cell(0, 0, product.name.upper(), align='C', ln=True)
+                    pdf.set_font('DejaVu', '', 18)
+                    pdf.set_xy(175, 40)
+                    pdf.cell(0, 0, product.name.upper(), align='L', ln=True)
                     
-                    pdf.set_font('DejaVu', '', 24)
+                    pdf.set_font('DejaVu', 'B', 18)
                     pdf.set_text_color(0, 0, 0)
-                    pdf.set_xy(120, 110)
-                    pdf.cell(0, 0, price_str, align='C', ln=True)
+                    pdf.set_xy(190, 110)
+                    pdf.cell(0, 0, price_str, align='L', ln=True)
                     pdf.set_text_color(0, 0, 0)
                     
                     pdf.set_font('DejaVu', '', 12)
-                    materials = product.material.split(',')
-                    y_pos = 150
-                    for material in materials:
-                        material = material.strip()
-                        pdf.set_xy(90, y_pos)
-                        pdf.cell(0, 0, material, align='C', ln=True)
-                        y_pos += 8
+                    # materials = product.material.split(',')
+           
+                    y_pos = 50
+                    # Материалы (левая колонка)
+                   
+                    pdf.set_font('DejaVu', '', 12)
+                    pdf.set_xy(180, 150)
+                    pdf.multi_cell(100, 5, materials_str, align='L')
+
                     
-                    pdf.set_xy(190, 150)
-                    pdf.cell(0, 0, f" {product.dimensions}", align='C', ln=True)
+                    # Название материалов (правая колонка)
+                    
+                    pdf.set_xy(230, 150)
+                    pdf.multi_cell(100, 5, dimensions_name_str, align='L')
+                    # Размеры (правая колонка)
+                    pdf.set_font('DejaVu', 'B', 12)
+                    pdf.set_xy(250, 150)
+                    pdf.multi_cell(100, 5, dimensions_str, align='L')
+
+                    # Описание
                     if product.description:
                         pdf.set_font('DejaVu', '', 14)
-                        pdf.set_xy(50, 50)
-                        pdf.multi_cell(287, 5, product.description, align='C')
+                        pdf.set_xy(175, 50)
+                        pdf.multi_cell(287, 5, product.description, align='L')
                 else:
                     # Вариант 2: текст слева
-                    pdf.set_font('DejaVu', '', 14)
-                    pdf.set_xy(20, 40)
+                    pdf.set_font('DejaVu', '', 18)
+                    pdf.set_xy(17, 40)
                     pdf.cell(170, 0, product.name.upper(), ln=True)
                     
-                    pdf.set_font('DejaVu', '', 24)
+                    pdf.set_font('DejaVu', 'B', 18)
                     pdf.set_text_color(0, 0, 0)
                     pdf.set_xy(35, 101)
                     pdf.cell(200, 18, price_str, ln=True)
                     pdf.set_text_color(0, 0, 0)
                     
                     pdf.set_font('DejaVu', '', 12)
-                    materials = product.material.split(',')
+               
+ 
                     y_pos = 160
-                    for material in materials:
-                        material = material.strip()
-                        pdf.set_xy(15, 150)
-                        pdf.cell(32, 0, material, align='C', ln=True)
-                        y_pos += 8
+                    # Выводим материалы
+                    pdf.set_font('DejaVu', '', 12)
+                    pdf.set_xy(23, 150)
+                    pdf.multi_cell(60, 5, materials_str, align='L')
                     
-                    pdf.set_xy(75, 150)
-                    pdf.cell(0, 0, f"{product.dimensions}", ln=True)
+                    pdf.set_xy(80, 150)
+                    pdf.multi_cell(100, 5, dimensions_name_str, align='L')
+                    # Размеры
+                    pdf.set_font('DejaVu', 'B', 12)
+                    pdf.set_xy(100, 150)
+                    pdf.multi_cell(60, 5, dimensions_str, align='L')
 
                     if product.description:
                         pdf.set_font('DejaVu', '', 14)
-                        pdf.set_xy(20, 50)
+                        pdf.set_xy(17, 50)
                         pdf.multi_cell(170, 5, product.description, align='L')
                 
                 
                 # Добавляем контактную информацию
-                pdf.set_font('DejaVu', '', 14)
+                pdf.set_font('DejaVu', 'B', 14)
                 pdf.set_text_color(0, 0, 0)
                 pdf.set_xy(0, 200)
                 phone_number1 = "+74951912718"
@@ -270,7 +297,7 @@ def convert_to_pdf(request):
                 pdf.set_xy(220, 200)
                 phone_number2 = "+79627379775"
                 pdf.cell(55, 0, phone_number2, link=f"tel:{phone_number2}", align='C', ln=True)
-
+                pdf.set_font('DejaVu', '', 14)
                 pdf.set_xy(90, 200)
                 pdf.cell(0, 0, "www.mebel-altezza.ru", ln=1, link="https://mebel-altezza.ru/")
                 pdf.set_xy(160, 200)
@@ -288,6 +315,8 @@ def convert_to_pdf(request):
         response.write(pdf_output)
         return response
     
+
+
 def upload_csv(request):
     if request.method == 'POST':
         form = UploadCSVForm(request.POST, request.FILES)
@@ -295,58 +324,73 @@ def upload_csv(request):
             csv_file = request.FILES['csv_file']
             
             try:
-                # Чтение CSV с учетом BOM и правильным разделителем
-                csv_file_wrapper = TextIOWrapper(csv_file.file, encoding='utf-8-sig')  # Используем utf-8-sig для автоматического удаления BOM
+                csv_file_wrapper = TextIOWrapper(csv_file.file, encoding='utf-8-sig')
                 csv_reader = csv.DictReader(csv_file_wrapper, delimiter=';')
-                
-                # Удаление пустых ключей (которые могут появиться из-за лишних разделителей)
-                csv_reader.fieldnames = [name.strip('\ufeff') for name in csv_reader.fieldnames if name]
+                csv_reader.fieldnames = [name.strip('\ufeff').strip() for name in csv_reader.fieldnames if name]
                 
                 created_count = 0
                 errors = []
                 
                 for i, row in enumerate(csv_reader, start=1):
-                    # Очистка строки от пустых значений
                     row = {k.strip('\ufeff').strip(): v.strip() for k, v in row.items() if k and k.strip()}
                     
                     try:
-                        # Проверка обязательных полей
-                        required_fields = ['Артикул', 'Наименование', 'Цена', 'Остаток', 'Материал', 'Цвет']
+                        required_fields = ['Артикул', 'Наименование', 'Цена', 'Остаток', 'Цвет']
                         if not all(field in row for field in required_fields):
                             missing = set(required_fields) - set(row.keys())
                             raise ValueError(f"Отсутствуют поля: {', '.join(missing)}")
                         
-                        # Преобразование данных
-                        price = float(row['Цена'].replace(',', '.'))
-                        stock = int(row['Остаток'])
-                        
-                        # Подготовка данных для модели
+                        # Основные данные продукта
                         product_data = {
                             'article': row['Артикул'],
                             'name': row['Наименование'],
-                            'price': price,
-                            'stock': stock,
-                            'material': row['Материал'],
+                            'price': float(row['Цена'].replace(',', '.')),
+                            'stock': int(row['Остаток']),
                             'color': row['Цвет'],
-                            'dimensions': row.get('Габариты', ''),
                             'description': row.get('Описание', ''),
                         }
                         
-                        # Создание или обновление продукта
+                        # Создаем/обновляем продукт
                         product, created = Product.objects.update_or_create(
                             article=product_data['article'],
                             defaults=product_data
                         )
                         
+                        # Обработка материалов
+                        if 'Материал' in row and row['Материал']:
+                            # Удаляем старые материалы
+                            ProductMaterial.objects.filter(product=product).delete()
+                            
+                            materials = [m.strip() for m in row['Материал'].split(',')]
+                            for material_name in materials:
+                                material, _ = Material.objects.get_or_create(name=material_name)
+                                ProductMaterial.objects.get_or_create(
+                                    product=product, 
+                                    material=material
+                                )
+                        
+                        # Обработка габаритов
+                        if 'Габариты' in row and row['Габариты']:
+                            # Удаляем старые габариты
+                            ProductDimensions.objects.filter(product=product).delete()
+                            
+                            dimensions_list = [d.strip() for d in row['Габариты'].split(',')]
+                            for dimension_size in dimensions_list:
+                                dimension, _ = Dimensions.objects.get_or_create(size=dimension_size)
+                                ProductDimensions.objects.get_or_create(
+                                    product=product,
+                                    dimensions=dimension
+                                )
+                        
                         if created:
                             created_count += 1
                             
                     except Exception as e:
-                        errors.append(f"Строка {i}: {e}")
+                        errors.append(f"Строка {i}: {str(e)}")
                         continue
                 
                 if errors:
-                    messages.warning(request, f"Успешно загружено {created_count} товаров, но возникли ошибки:<br>" + "<br>".join(errors))
+                    messages.warning(request, f"Успешно загружено {created_count} товаров, ошибки: {len(errors)}")
                 else:
                     messages.success(request, f'Успешно загружено {created_count} товаров')
                 
@@ -361,16 +405,60 @@ def upload_csv(request):
 
 
 def product_list(request):
-    products = Product.objects.all()
+    products = Product.objects.prefetch_related('materials', 'dimensions').all()
     return render(request, 'offer/product_list.html', {'products': products})
+
+
 
 
 def edit_product(request, product_id):
     product = get_object_or_404(Product, id=product_id)
+    
     if request.method == 'POST':
         form = ProductForm(request.POST, request.FILES, instance=product)
         if form.is_valid():
-            form.save()
+            product = form.save()
+            
+            # Обработка материалов
+            materials_str = form.cleaned_data.get('materials_input', '')
+            materials_list = [m.strip() for m in materials_str.split(',') if m.strip()]
+            
+            ProductMaterial.objects.filter(product=product).delete()
+            for material_name in materials_list:
+                material, _ = Material.objects.get_or_create(name=material_name)
+                ProductMaterial.objects.get_or_create(product=product, material=material)
+            
+            # Обработка габаритов (ИСПРАВЛЕНО: добавлена обработка названий)
+            dimensions_str = form.cleaned_data.get('dimensions_input', '')
+            dimensions_name_str = form.cleaned_data.get('dimensions_name_input', '')
+            
+            # Создаем списки значений
+            dimensions_list = [d.strip() for d in dimensions_str.split(',') if d.strip()]
+            dimensions_name_list = [n.strip() for n in dimensions_name_str.split(',') if n.strip()]
+            
+            # Удаляем старые связи
+            ProductDimensions.objects.filter(product=product).delete()
+            
+            # Создаем новые связи с учетом названий
+            for i, dimension_size in enumerate(dimensions_list):
+                # Берем название из списка, если есть, иначе пустая строка
+                name = dimensions_name_list[i] if i < len(dimensions_name_list) else ''
+                
+                dimension, _ = Dimensions.objects.get_or_create(
+                    size=dimension_size,
+                    defaults={'name': name}  # Устанавливаем имя при создании
+                )
+                
+                # Если объект уже существовал - обновляем имя
+                if dimension.name != name:
+                    dimension.name = name
+                    dimension.save()
+                
+                ProductDimensions.objects.create(
+                    product=product,
+                    dimensions=dimension
+                )
+            
             messages.success(request, 'Товар успешно обновлен')
             return redirect('product_list')
     else:
@@ -380,6 +468,7 @@ def edit_product(request, product_id):
         'form': form,
         'product': product
     })
+
 
 
 def delete_products(request):

@@ -22,8 +22,8 @@ from offer.views import upload_csv, product_list, edit_product, convert_to_pdf, 
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', upload_csv, name='upload_csv'),
-    path('products/', product_list, name='product_list'),  
+    path('products/', upload_csv, name='upload_csv'),
+    path('', product_list, name='product_list'),  
     path('edit/<int:product_id>/', edit_product, name='edit_product'),  
     path('delete-products/', delete_products, name='delete_products'),
     path('convert_to_pdf/', convert_to_pdf, name='convert_to_pdf'),

@@ -2,29 +2,71 @@
 {% block title %} Редактирование  {% endblock %}
 
 {% block content %}
+
 <div class="container mt-4">
     <h2 class="mb-4 text-center">Редактирование товара: {{ product.name }}</h2>
     
     <div class="d-flex justify-content-center">
-        <form method="post" enctype="multipart/form-data" class="w-100" style="max-width: 600px;">
+        <form method="post" enctype="multipart/form-data" class="w-100 product-form" style="max-width: 600px;">
             {% csrf_token %}
             
             <div class="card mb-4 mx-auto">
                 <div class="card-body">
                     <h5 class="card-title text-center mb-3">Основная информация</h5>
-                    <div class="product-form">
-                        {{ form.as_p }}
+                    
+                    {% for field in form %}
+                        {% if field.name != 'materials_input' and field.name != 'dimensions_input' and field.name != 'dimensions_name_input' %}
+                            <div class="mb-3">
+                                <label class="form-label">{{ field.label }}</label>
+                                {{ field }}
+                                {% if field.help_text %}
+                                    <small class="form-text text-muted">{{ field.help_text }}</small>
+                                {% endif %}
+                                {% for error in field.errors %}
+                                    <div class="alert alert-danger mt-1">{{ error }}</div>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+                    
+                    <!-- Специальные поля для материалов и габаритов -->
+                    <div class="mb-3">
+                        <label class="form-label">{{ form.materials_input.label }}</label>
+                        {{ form.materials_input }}
+                        <small class="form-text text-muted">Введите названия материалов через запятую</small>
+                        {% for error in form.materials_input.errors %}
+                            <div class="alert alert-danger mt-1">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">{{ form.dimensions_name_input.label }}</label>
+                        {{ form.dimensions_name_input }}
+                        <small class="form-text text-muted">Введите названия габаритов через запятую</small>
+                        {% for error in form.dimensions_name_input.errors %}
+                            <div class="alert alert-danger mt-1">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">{{ form.dimensions_input.label }}</label>
+                        {{ form.dimensions_input }}
+                        <small class="form-text text-muted">Введите габариты через запятую</small>
+                        {% for error in form.dimensions_input.errors %}
+                            <div class="alert alert-danger mt-1">{{ error }}</div>
+                        {% endfor %}
                     </div>
                 </div>
             </div>
             
             <div class="d-flex justify-content-center gap-3">
                 <button type="submit" class="btn btn-primary px-4">Сохранить</button>
-                <a href="{% url 'product_list' %}" class="btn btn-outline-secondary  px-4">Отмена</a>
+                <a href="{% url 'product_list' %}" class="btn btn-outline-secondary px-4">Отмена</a>
             </div>
         </form>
     </div>
 </div>
+
 
 <style>
     .container {
@@ -56,21 +98,20 @@
     }
 
     .card-body {
-        padding: 5px;
+        padding: 25px; /* Увеличено для лучшего визуального восприятия */
     }
 
     .card-title {
         color: #525253;
         font-weight: 500;
         font-size: 1.25rem;
+        padding-bottom: 15px;
+        border-bottom: 1px solid #eee;
+        margin-bottom: 20px;
     }
 
-    /* Стили для формы */
-    .product-form p {
-        margin-bottom: 1.5rem;
-    }
-
-    .product-form label {
+    /* Улучшенные стили для формы */
+    .product-form .form-label {
         display: block;
         font-weight: 500;
         margin-bottom: 0.5rem;
@@ -102,25 +143,14 @@
     }
 
     /* Стили для ошибок валидации */
-    .product-form .errorlist {
+    .alert-danger {
         color: #dc3545;
         margin-top: 0.4rem;
-        margin-bottom: 0;
-        padding-left: 1rem;
         font-size: 0.9rem;
-    }
-
-    /* Стили для чекбоксов */
-    .product-form .checkbox-input {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        margin-bottom: 1rem;
-    }
-
-    .product-form .checkbox-input input {
-        width: auto;
-        margin: 0;
+        padding: 5px 10px;
+        border-radius: 4px;
+        background-color: #f8d7da;
+        border: 1px solid #f5c6cb;
     }
 
     .btn {
@@ -129,15 +159,16 @@
         font-weight: 500;
         transition: all 0.3s ease;
         min-width: 120px;
+        font-size: 1rem;
     }
 
     .btn-primary {
-        border: 2px solid #6c757d;
+        background-color: #c3dff8;
+        border-color: #6c757d;
     }
 
     .btn-outline-secondary {
-        border: 2px solid #6c757d;
-        text-decoration: none;
+        border-color: #6c757d;
         color: #6c757d;
     }
 
@@ -147,13 +178,34 @@
     }
 
     .btn-primary:hover {
-        background-color: #6c757d;
-        color: white;
+        background-color: #90c7ee;
+        border-color: #545b62;
     }
 
     .btn-outline-secondary:hover {
         background-color: #6c757d;
         color: white;
+    }
+
+    /* Стили для чекбоксов */
+    .form-check {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 1rem;
+    }
+
+    .form-check-input {
+        width: auto;
+        margin: 0;
+    }
+
+    /* Стили для текстовых подсказок */
+    .form-text {
+        font-size: 0.85rem;
+        color: #6c757d;
+        display: block;
+        margin-top: 0.25rem;
     }
 </style>
 {% endblock %}

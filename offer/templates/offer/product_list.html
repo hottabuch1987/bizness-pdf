@@ -1,6 +1,7 @@
 {% extends 'offer/base.html' %}
 {% block title %} Главная {% endblock %}
 {% block content %}
+
 <div class="container mt-4">
     <form method="post" action="{% url 'convert_to_pdf' %}" id="pdf-form">
         {% csrf_token %}
@@ -41,13 +42,13 @@
                         <th class="text-nowrap text-center">Остаток</th>
                         <th>Материал</th>
                         <th>Цвет</th>
+                        <th>Название</th>
                         <th>Габариты</th>
                         <th class="text-nowrap">Фото</th>
                         <th>
                             Шаблоны   
                         </th>
                         <th class="text-nowrap">Действия</th>
-                   
                     </tr>
                 </thead>
                 <tbody>
@@ -64,15 +65,41 @@
                                 {{ product.stock }} шт.
                             </span>
                         </td>
-                        <td>{{ product.material }}</td>
+                        <!-- Исправленные поля ManyToMany -->
+                        <td>
+                            {% for material in product.materials.all %}
+                                {{ material.name }}{% if not forloop.last %}, {% endif %}
+                            {% empty %}
+                                -
+                            {% endfor %}
+                        </td>
                         <td>
                             <span class="color-badge" style="background-color: {{ product.color|lower }};"></span>
                             {{ product.color }}
                         </td>
-                        <td>{{ product.dimensions }}</td>
                         <td>
-                            {% if product.main_photo_url %}
-                                <img src="{{ product.main_photo_url }}" class="img-thumbnail product-photo">
+                            {% for dimension in product.dimensions.all %}
+                            {% if dimension.name is not None %}
+                                {{ dimension.name }}
+                            {% else %}
+                                -
+                            {% endif %}
+                            {% if not forloop.last %}<br>{% endif %}
+                            {% empty %}
+                                -
+                            {% endfor %}
+                        </td>
+                        <td>
+                            {% for dimension in product.dimensions.all %}
+                                {{ dimension.size }}{% if not forloop.last %}<br>{% endif %}
+                            {% empty %}
+                                -
+                            {% endfor %}
+                        </td>
+                        <!-- Конец исправленных полей -->
+                        <td>
+                            {% if product.main_photo %}  <!-- Исправлено: проверка на существование фото -->
+                                <img src="{{ product.main_photo.url }}" class="img-thumbnail product-photo">
                             {% else %}
                                 <span class="text-muted">Нет фото</span>
                             {% endif %}
@@ -81,11 +108,12 @@
                             <div class="mb-4">
                                 <label class="form-check-label me-3">
                                     <input type="radio" name="option_{{ product.id }}" value="option1" class="form-check-input" checked>
-                                    вариант 1
+                                    № 1
                                 </label>
+                                <br>
                                 <label class="form-check-label">
                                     <input type="radio" name="option_{{ product.id }}" value="option2" class="form-check-input">
-                                    вариант 2
+                                    № 2
                                 </label>
                             </div>
                         </td>
@@ -94,11 +122,10 @@
                                 <i class="fas fa-edit me-1"></i>изменить
                             </a>
                         </td>
-
                     </tr>
                     {% empty %}
                     <tr>
-                        <td colspan="10" class="text-center py-4 text-muted">Нет товаров для отображения</td>
+                        <td colspan="11" class="text-center py-4 text-muted">Нет товаров для отображения</td>
                     </tr>
                     {% endfor %}
                 </tbody>
@@ -106,6 +133,7 @@
         </div>
     </form>
 </div>
+
 
 <style>
     :root {
