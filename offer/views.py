@@ -1,23 +1,19 @@
-from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib import messages
-from .models import Product
-from .forms import UploadCSVForm, ProductForm
-from io import TextIOWrapper
 import csv
-
-from django.http import HttpResponse
-from django.conf import settings
-from django.shortcuts import get_object_or_404, redirect
-
-from fpdf import FPDF
-from PIL import Image
 import os
 import tempfile
 from io import TextIOWrapper
-import csv
+
+from PIL import Image, ImageDraw
+from django.conf import settings
 from django.contrib import messages
+from django.http import HttpResponse
+from django.shortcuts import get_object_or_404
 from django.shortcuts import render, redirect
+from fpdf import FPDF
+
+from .forms import UploadCSVForm, ProductForm
 from .models import Product, Material, Dimensions, ProductMaterial, ProductDimensions
+
 
 def convert_to_pdf(request):
     if request.method != 'POST':
@@ -31,18 +27,17 @@ def convert_to_pdf(request):
     # Инициализация PDF с альбомной ориентацией
     pdf = FPDF(orientation='L', unit='mm', format='A4')
     pdf.set_auto_page_break(auto=False, margin=0)
-    
+
     # Настройка шрифтов
-    font_path = os.path.join(settings.BASE_DIR, 'static', 'ofont.ru_Plumb.ttf')
+    font_path = os.path.join(settings.BASE_DIR, 'static', 'Plumb.ttf')
     pdf.add_font('DejaVu', '', font_path, uni=True)
-    font_path_bild = os.path.join(settings.BASE_DIR, 'static', 'ofont.ru_Farabee.ttf')
+    font_path_bild = os.path.join(settings.BASE_DIR, 'static', 'Plumb_bold.ttf')
     pdf.add_font('DejaVu', 'B', font_path_bild, uni=True)
-    background1_path = os.path.join(settings.BASE_DIR, 'img1.jpg')  # Для option1
-    background2_path = os.path.join(settings.BASE_DIR, 'img2.jpg')  # Для option2
+    BACKGROUND1_PATH = os.path.join(settings.BASE_DIR, 'img1.jpg')  # Для option1
+    BACKGROUND2_PATH = os.path.join(settings.BASE_DIR, 'img2.jpg')  # Для option2
     
     # Функция для скругления углов
     def add_rounded_corners(image, radius=37):
-        from PIL import ImageDraw
         mask = Image.new('L', image.size, 0)
         draw = ImageDraw.Draw(mask)
         draw.rounded_rectangle([(0, 0), image.size], radius, fill=255)
@@ -93,14 +88,12 @@ def convert_to_pdf(request):
                 continue
                 
             option = request.POST.get(f'option_{product_id}', 'option1')
-            bg_path = background1_path if option == 'option1' else background2_path
+            BACKGROUND_IMAGE_PATH = BACKGROUND1_PATH if option == 'option1' else BACKGROUND2_PATH
             
             try:
                 # Создаем композицию изображения
-                with Image.open(bg_path) as bg:
+                with Image.open(BACKGROUND_IMAGE_PATH) as bg:
                     bg = bg.convert("RGBA")
-                    bg_width, bg_height = bg.size
-                    
                     # Обработка главного изображения
                     with Image.open(product.main_photo.path) as product_img:
                         # Конвертация
@@ -155,7 +148,7 @@ def convert_to_pdf(request):
                                         img = resize_and_crop_cover(img, img_target_width, img_target_height)
                                         
                                         # Скругляем углы
-                                        img = add_rounded_corners(img, radius=15)
+                                        img = add_rounded_corners(img, radius=37)
 
                                         bg.paste(img, (x_pos, y_pos), img)
                                         
@@ -229,9 +222,6 @@ def convert_to_pdf(request):
                     pdf.set_text_color(0, 0, 0)
                     
                     pdf.set_font('DejaVu', '', 12)
-                    # materials = product.material.split(',')
-           
-                    y_pos = 50
                     # Материалы (левая колонка)
                    
                     pdf.set_font('DejaVu', '', 12)
@@ -266,9 +256,7 @@ def convert_to_pdf(request):
                     pdf.set_text_color(0, 0, 0)
                     
                     pdf.set_font('DejaVu', '', 12)
-               
- 
-                    y_pos = 160
+
                     # Выводим материалы
                     pdf.set_font('DejaVu', '', 12)
                     pdf.set_xy(23, 150)
@@ -288,19 +276,22 @@ def convert_to_pdf(request):
                 
                 
                 # Добавляем контактную информацию
-                pdf.set_font('DejaVu', 'B', 14)
-                pdf.set_text_color(0, 0, 0)
-                pdf.set_xy(0, 200)
-                phone_number1 = "+74951912718"
-                pdf.cell(75, 0, phone_number1, link=f"tel:{phone_number1}", align='C', ln=True)
+                PHONE_NUMBER1 = "+7 (495) 191-27-18"
+                PHONE_NUMBER2 = "+7 (962) 737-97-75"
+                Y_CHOORDS = 195
 
-                pdf.set_xy(220, 200)
-                phone_number2 = "+79627379775"
-                pdf.cell(55, 0, phone_number2, link=f"tel:{phone_number2}", align='C', ln=True)
-                pdf.set_font('DejaVu', '', 14)
-                pdf.set_xy(90, 200)
+                pdf.set_font('DejaVu', 'B', 18)
+                pdf.set_text_color(0, 0, 0)
+
+                pdf.set_xy(0, Y_CHOORDS)
+                pdf.cell(75, 0, PHONE_NUMBER1, link=f"tel:{PHONE_NUMBER1}", align='C', ln=True)
+                pdf.set_xy(220, Y_CHOORDS)
+                pdf.cell(55, 0, PHONE_NUMBER2, link=f"tel:{PHONE_NUMBER2}", align='C', ln=True)
+
+                pdf.set_font('DejaVu', '', 16)
+                pdf.set_xy(90, Y_CHOORDS)
                 pdf.cell(0, 0, "www.mebel-altezza.ru", ln=1, link="https://mebel-altezza.ru/")
-                pdf.set_xy(160, 200)
+                pdf.set_xy(160, Y_CHOORDS)
                 pdf.cell(0, 0, "info@mebel-altezza.ru", ln=1, link="mailto:info@mebel-altezza.ru")
                   
                       
