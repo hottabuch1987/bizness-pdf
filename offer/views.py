@@ -3,7 +3,7 @@ import os
 import tempfile
 from io import TextIOWrapper
 
-from PIL import Image
+from PIL import Image, ImageDraw, ImageFont
 from django.conf import settings
 from django.contrib import messages
 from django.http import HttpResponse
@@ -13,7 +13,7 @@ from fpdf import FPDF
 
 from .forms import UploadCSVForm, ProductForm
 from .models import Product, Material, Dimensions, ProductMaterial, ProductDimensions
-from .utils import resize_and_crop_cover, add_rounded_corners
+from .utils import resize_and_crop_cover, add_rounded_corners, smart_wrap
 
 
 def convert_to_pdf(request):
@@ -151,6 +151,23 @@ def convert_to_pdf(request):
                                         x_pos += photo_width   # отступ между изображениями
 
                                         # Сохраняем временное изображение
+
+
+                        #Вставка текста на картинку
+                        if option == "option1":
+                            #Вставка названия на картинку
+                            # --- Подготовим прозрачный слой для текста ---
+                            txt_layer = Image.new("RGBA", bg.size, (255, 255, 255, 0))
+                            draw = ImageDraw.Draw(txt_layer)
+                            font_size = 95
+                            font_path = os.path.join(settings.BASE_DIR, 'static', 'Plumb.ttf')
+                            font = ImageFont.truetype(font_path, font_size)  # Можно заменить на любой TTF-шрифт
+                            # --- Положение текста ---
+                            text_x, text_y = 2063, 508  # Координаты
+                            draw.text((text_x, text_y), smart_wrap(product.name.upper()) , font=font, fill=(0, 0, 0, 255))    # Основной текст
+
+                            bg = Image.alpha_composite(bg, txt_layer)
+
                         temp_img = os.path.join(temp_dir, f'comp_{product_id}.jpg')
                         bg.convert('RGB').save(temp_img, quality=95)
                 
@@ -174,11 +191,6 @@ def convert_to_pdf(request):
                 # Различное позиционирование текста
                 if option == 'option1':
                     # Вариант 1: текст по центру
-                    pdf.set_font('DejaVu', '', 18)
-                    # Конвертируем пиксели в мм
-                    pdf.set_xy(px_to_mm(1058), px_to_mm(70))
-                    pdf.cell(0, 0, product.name.upper(), align='L', ln=True)
-                    
                     pdf.set_font('DejaVu', 'B', 18)
                     pdf.set_text_color(0, 0, 0)
                     pdf.set_xy(px_to_mm(190), px_to_mm(110))

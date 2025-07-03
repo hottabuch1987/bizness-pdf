@@ -44,3 +44,35 @@ def resize_and_crop_cover(img, target_width, target_height):
     bottom = top + target_height
 
     return img.crop((left, top, right, bottom))
+
+
+def smart_wrap(text, max_width=21):
+    lines = []
+    current_line = ''
+
+    for word in text.split():
+        # Если слово длиннее, чем вся строка — переносим его отдельно
+        if len(word) > max_width:
+            if current_line:
+                lines.append(current_line.rstrip())
+                current_line = ''
+            # Разбиваем очень длинное слово по max_width
+            for i in range(0, len(word), max_width):
+                lines.append(word[i:i+max_width])
+            continue
+
+        # Если слово помещается в текущую строку
+        if len(current_line) + len(word) + 1 <= max_width:
+            if current_line:
+                current_line += ' ' + word
+            else:
+                current_line = word
+        else:
+            lines.append(current_line.rstrip())
+            current_line = word
+
+    if current_line:
+        lines.append(current_line.rstrip())
+
+    return '\n'.join(lines)
+
