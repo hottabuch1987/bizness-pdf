@@ -3,7 +3,7 @@ import os
 import tempfile
 from io import TextIOWrapper
 
-from PIL import Image, ImageDraw
+from PIL import Image
 from django.conf import settings
 from django.contrib import messages
 from django.http import HttpResponse
@@ -13,6 +13,7 @@ from fpdf import FPDF
 
 from .forms import UploadCSVForm, ProductForm
 from .models import Product, Material, Dimensions, ProductMaterial, ProductDimensions
+from .utils import resize_and_crop_cover, add_rounded_corners
 
 
 def convert_to_pdf(request):
@@ -35,55 +36,12 @@ def convert_to_pdf(request):
     pdf.add_font('DejaVu', 'B', font_path_bild, uni=True)
     BACKGROUND1_PATH = os.path.join(settings.BASE_DIR, 'img1.jpg')  # Для option1
     BACKGROUND2_PATH = os.path.join(settings.BASE_DIR, 'img2.jpg')  # Для option2
-    
-    # Функция для скругления углов
-    def add_rounded_corners(image, radius=37):
-        mask = Image.new('L', image.size, 0)
-        draw = ImageDraw.Draw(mask)
-        draw.rounded_rectangle([(0, 0), image.size], radius, fill=255)
-        if image.mode != 'RGBA':
-            image = image.convert('RGBA')
-        image.putalpha(mask)
-        return image
 
-    # Функция для обрезки изображения по принципу "cover"
-    def resize_and_crop_cover(img, target_width, target_height):
-        """
-        Масштабирует и обрезает изображение для заполнения целевой области
-        без искажения пропорций (аналог background-size: cover)
-        """
-        if target_width <= 0 or target_height <= 0:
-            return img
-
-        # Рассчитываем соотношения сторон
-        img_ratio = img.width / img.height
-        target_ratio = target_width / target_height
-
-        # Определяем новые размеры для масштабирования
-        if img_ratio > target_ratio:
-            # Подгоняем по высоте -> ширина станет больше целевой
-            new_height = target_height
-            new_width = int(img.width * new_height / img.height)
-        else:
-            # Подгоняем по ширине -> высота станет больше целевой
-            new_width = target_width
-            new_height = int(img.height * new_width / img.width)
-
-        # Масштабируем
-        img = img.resize((new_width, new_height), Image.LANCZOS)
-        
-        # Центрируем и обрезаем
-        left = (new_width - target_width) // 2
-        top = (new_height - target_height) // 2
-        right = left + target_width
-        bottom = top + target_height
-        
-        return img.crop((left, top, right, bottom))
 
     with tempfile.TemporaryDirectory() as temp_dir:
         for product_id in selected_ids:
             product = get_object_or_404(Product, id=product_id)
-            print(product)
+            print(product, product_id, product.main_photo)
             if not product.main_photo:
                 continue
                 
