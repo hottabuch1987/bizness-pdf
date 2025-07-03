@@ -121,6 +121,10 @@ def convert_to_pdf(request):
                         # Обработка дополнительных изображений
                         additional_photos = []
                         
+                        PX_TO_MM = 0.193023
+                        def px_to_mm(px):
+                            return px * PX_TO_MM
+                        
                         if option == "option1":
                             if product.additional_photo1 and os.path.exists(product.additional_photo1.path):
                                 additional_photos.append(product.additional_photo1.path)
@@ -209,70 +213,69 @@ def convert_to_pdf(request):
                 dimensions_str = ','.join([d.size for d in product.dimensions.all()]).replace(',', '\n')
 
                 # Различное позиционирование текста
+                # Различное позиционирование текста
                 if option == 'option1':
                     # Вариант 1: текст по центру
                     pdf.set_font('DejaVu', '', 18)
-                    pdf.set_xy(175, 40)
+                    # Конвертируем пиксели в мм
+                    pdf.set_xy(px_to_mm(1058), px_to_mm(70))
                     pdf.cell(0, 0, product.name.upper(), align='L', ln=True)
                     
                     pdf.set_font('DejaVu', 'B', 18)
                     pdf.set_text_color(0, 0, 0)
-                    pdf.set_xy(190, 110)
+                    pdf.set_xy(px_to_mm(190), px_to_mm(110))
                     pdf.cell(0, 0, price_str, align='L', ln=True)
                     pdf.set_text_color(0, 0, 0)
                     
                     pdf.set_font('DejaVu', '', 12)
                     # Материалы (левая колонка)
-                   
                     pdf.set_font('DejaVu', '', 12)
-                    pdf.set_xy(180, 150)
-                    pdf.multi_cell(100, 5, materials_str, align='L')
+                    pdf.set_xy(px_to_mm(180), px_to_mm(150))
+                    pdf.multi_cell(px_to_mm(100), px_to_mm(5), materials_str, align='L')
 
-                    
                     # Название материалов (правая колонка)
-                    
-                    pdf.set_xy(230, 150)
-                    pdf.multi_cell(100, 5, dimensions_name_str, align='L')
+                    pdf.set_xy(px_to_mm(230), px_to_mm(150))
+                    pdf.multi_cell(px_to_mm(100), px_to_mm(5), dimensions_name_str, align='L')
                     # Размеры (правая колонка)
                     pdf.set_font('DejaVu', 'B', 12)
-                    pdf.set_xy(250, 150)
-                    pdf.multi_cell(100, 5, dimensions_str, align='L')
+                    pdf.set_xy(px_to_mm(250), px_to_mm(150))
+                    pdf.multi_cell(px_to_mm(100), px_to_mm(5), dimensions_str, align='L')
 
                     # Описание
                     if product.description:
                         pdf.set_font('DejaVu', '', 14)
-                        pdf.set_xy(175, 50)
-                        pdf.multi_cell(287, 5, product.description, align='L')
+                        pdf.set_xy(px_to_mm(175), px_to_mm(50))
+                        pdf.multi_cell(px_to_mm(287), px_to_mm(5), product.description, align='L')
                 else:
                     # Вариант 2: текст слева
                     pdf.set_font('DejaVu', '', 18)
-                    pdf.set_xy(17, 40)
-                    pdf.cell(170, 0, product.name.upper(), ln=True)
+                    pdf.set_xy(px_to_mm(17), px_to_mm(40))
+                    pdf.cell(px_to_mm(170), 0, product.name.upper(), ln=True)
                     
                     pdf.set_font('DejaVu', 'B', 18)
                     pdf.set_text_color(0, 0, 0)
-                    pdf.set_xy(35, 101)
-                    pdf.cell(200, 18, price_str, ln=True)
+                    pdf.set_xy(px_to_mm(35), px_to_mm(101))
+                    pdf.cell(px_to_mm(200), px_to_mm(18), price_str, ln=True)
                     pdf.set_text_color(0, 0, 0)
                     
                     pdf.set_font('DejaVu', '', 12)
 
                     # Выводим материалы
                     pdf.set_font('DejaVu', '', 12)
-                    pdf.set_xy(23, 150)
-                    pdf.multi_cell(60, 5, materials_str, align='L')
+                    pdf.set_xy(px_to_mm(23), px_to_mm(150))
+                    pdf.multi_cell(px_to_mm(60), px_to_mm(5), materials_str, align='L')
                     
-                    pdf.set_xy(80, 150)
-                    pdf.multi_cell(100, 5, dimensions_name_str, align='L')
+                    pdf.set_xy(px_to_mm(80), px_to_mm(150))
+                    pdf.multi_cell(px_to_mm(100), px_to_mm(5), dimensions_name_str, align='L')
                     # Размеры
                     pdf.set_font('DejaVu', 'B', 12)
-                    pdf.set_xy(100, 150)
-                    pdf.multi_cell(60, 5, dimensions_str, align='L')
+                    pdf.set_xy(px_to_mm(100), px_to_mm(150))
+                    pdf.multi_cell(px_to_mm(60), px_to_mm(5), dimensions_str, align='L')
 
                     if product.description:
                         pdf.set_font('DejaVu', '', 14)
-                        pdf.set_xy(17, 50)
-                        pdf.multi_cell(170, 5, product.description, align='L')
+                        pdf.set_xy(px_to_mm(17), px_to_mm(50))
+                        pdf.multi_cell(px_to_mm(170), px_to_mm(5), product.description, align='L')
                 
                 
                 # Добавляем контактную информацию
@@ -306,7 +309,6 @@ def convert_to_pdf(request):
         response.write(pdf_output)
         return response
     
-
 
 def upload_csv(request):
     if request.method == 'POST':
@@ -400,8 +402,6 @@ def product_list(request):
     return render(request, 'offer/product_list.html', {'products': products})
 
 
-
-
 def edit_product(request, product_id):
     product = get_object_or_404(Product, id=product_id)
     
@@ -459,7 +459,6 @@ def edit_product(request, product_id):
         'form': form,
         'product': product
     })
-
 
 
 def delete_products(request):
