@@ -136,133 +136,175 @@
 
 
 <style>
-    :root {
-        --orange-primary: #807f7f;
-        --orange-light: #ffefe6;
-        --orange-dark: #898887;
-    }
-    
-    .text-orange {
-        color: var(--orange-primary);
-    }
-    
-    .btn-orange {
-        background-color: #f48e8e;
-        border-color: #f18282;
-        color: #ffffff;
-        font-weight: 600;
-        font-size: 16px;
-        border: 2px solid #f07979;
-        border-radius: 5px;
-        margin: 2px;
-    }
-    
-    .btn-orange:hover {
-        background-color: #e60f0f;
-        border-color: #e51313;;
-    }
-    
-    .table-orange {
-        background-color: var(--orange-primary);
-        color: white;
-    }
-    
-    .table-orange th {
-        border-bottom: 2px solid var(--orange-dark);
-    }
-    
-    .table-striped>tbody>tr:nth-child(odd)>* {
-        --bs-table-accent-bg: var(--orange-light);
-    }
-    
-    .table-hover tbody tr:hover {
-        background-color: rgba(242, 96, 6, 0.15) !important;
-    }
-    
-    .table {
-        font-size: 14px;
-        border-radius: 8px;
-        border-collapse: separate;
-        border: 1px solid #f0f0f0;
-    }
-    
-    .table th {
-        font-weight: 600;
-        text-transform: uppercase;
-        font-size: 13px;
-        letter-spacing: 0.5px;
-        vertical-align: middle;
-        padding: 14px 16px;
-    }
-    
-    .table td {
-        vertical-align: middle;
-        padding: 12px 16px;
-    }
-    
-    .color-badge {
-        display: inline-block;
-        width: 16px;
-        height: 16px;
-        border-radius: 50%;
-        border: 1px solid #dee2e6;
-        margin-right: 8px;
-        vertical-align: middle;
-        box-shadow: 0 1px 2px rgba(0,0,0,0.1);
-    }
-    
-    .badge {
-        font-weight: 500;
-        padding: 6px 10px;
-        border-radius: 20px;
-        min-width: 70px;
-        display: inline-block;
-    }
-    
-    
-    
-    .alert {
-        border-radius: 8px;
-    }
-    
-    .product-photo {
-        max-height: 60px;
-        width: auto;
-        border-radius: 4px;
-        border: 1px solid #eee;
-    }
-    
-    .link-orange {
-        color: #f48e8e;
-        text-decoration: none;
-        transition: color 0.2s;
-    }
-    
-    .link-orange:hover {
-        color: #e91919;
-        text-decoration: underline;
-    }
-    
-    .form-check-input:checked {
-        background-color: var(--orange-primary);
-        border-color: var(--orange-primary);
-    }
-    .btn-danger {
-        background-color: #f48e8e;
-        border-color: #f48e8e;
-        color: white;
-        font-weight: 600;
-        font-size: 16px;
-        border: 2px solid #f48e8e;
-        border-radius: 5px;
-        margin: 2px;
-    }
+:root {
+    --accent: #4f46e5;              /* синий-фиолетовый */
+    --accent-hover: #4338ca;
+    --accent-light: #eef2ff;
+    --danger: #ef4444;
+    --danger-hover: #dc2626;
+    --gray: #6b7280;
+    --gray-light: #f3f4f6;
+    --gray-dark: #374151;
+    --white: #ffffff;
+}
 
-    .btn-danger:hover {
-        background-color: #eb4a38;
-        border-color: #e05343;
-    }
+/* === Текст и кнопки === */
+.text-orange {
+    color: var(--accent);
+}
+
+.btn-orange {
+    background-color: var(--accent);
+    border-color: var(--accent);
+    color: var(--white);
+    font-weight: 500;
+    font-size: 15px;
+    padding: 8px 16px;
+    border-radius: 8px;
+    transition: background-color 0.2s ease;
+}
+
+.btn-orange:hover {
+    background-color: var(--accent-hover);
+    border-color: var(--accent-hover);
+}
+
+.btn-danger {
+    background-color: var(--danger);
+    border-color: var(--danger);
+    color: var(--white);
+    font-weight: 500;
+    font-size: 15px;
+    padding: 8px 16px;
+    border-radius: 8px;
+    transition: background-color 0.2s ease;
+}
+
+.btn-danger:hover {
+    background-color: var(--danger-hover);
+    border-color: var(--danger-hover);
+}
+
+/* === Таблица === */
+.table-orange {
+    background-color: var(--accent);
+    color: var(--white);
+}
+
+.table-orange th {
+    border-bottom: 2px solid var(--accent-hover);
+}
+
+.table-striped > tbody > tr:nth-child(odd) > * {
+    background-color: var(--accent-light);
+}
+
+.table-hover tbody tr:hover {
+    background-color: rgba(79, 70, 229, 0.08) !important;
+}
+
+.table {
+    font-size: 14px;
+    border-collapse: separate;
+    border-spacing: 0;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+}
+
+.table th {
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 12px;
+    letter-spacing: 0.5px;
+    vertical-align: middle;
+    padding: 12px 16px;
+    background-color: var(--accent);
+    color: var(--white);
+}
+
+.table td {
+    vertical-align: middle;
+    padding: 12px 16px;
+    background-color: var(--white);
+}
+
+/* === Шильдики и цветные элементы === */
+.color-badge {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    border: 1px solid #d1d5db;
+    margin-right: 8px;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+}
+
+.badge {
+    font-weight: 500;
+    padding: 6px 12px;
+    border-radius: 16px;
+    display: inline-block;
+    font-size: 13px;
+}
+
+.badge.bg-stock-success {
+    background-color: #d1fae5;
+    color: #065f46;
+}
+
+.badge.bg-stock-warning {
+    background-color: #fef9c3;
+    color: #92400e;
+}
+
+.badge.bg-stock-danger {
+    background-color: #fee2e2;
+    color: #991b1b;
+}
+
+/* === Фото и карточки === */
+.product-photo {
+    max-height: 60px;
+    width: auto;
+    border-radius: 6px;
+    border: 1px solid #e5e7eb;
+}
+
+/* === Ссылки === */
+.link-orange {
+    color: var(--accent);
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.link-orange:hover {
+    color: var(--accent-hover);
+    text-decoration: underline;
+}
+
+/* === Checkbox & Radio === */
+.form-check-input:checked {
+    background-color: var(--accent);
+    border-color: var(--accent);
+}
+
+/* === Alert === */
+.alert {
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.04);
+}
+
+/* === Контейнеры и форма === */
+.container {
+    background-color: var(--white);
+    border-radius: 12px;
+    padding: 24px;
+    box-shadow: 0 0 0 1px #e5e7eb, 0 1px 2px rgba(0,0,0,0.05);
+    margin-bottom: 32px;
+}
 </style>
+
 
 <script>
     function toggleSelectAll(source) {
