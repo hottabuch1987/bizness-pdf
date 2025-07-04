@@ -128,7 +128,8 @@ def process_option1(product, bg, font_path, resize_and_crop_cover, add_rounded_c
     draw.text((text_x, text_y), smart_wrap(product.name.upper()), font=font, fill=(0, 0, 0, 255))
     # Добавление описание
     text_x, text_y = 2063, 787
-    draw.text((text_x, text_y), smart_wrap(product.description), font=font, fill=(0, 0, 0, 255))
+    font_description = ImageFont.truetype(font_path, 54)
+    draw.text((text_x, text_y), smart_wrap(product.description, 50), font=font_description, fill=(0, 0, 0, 255))
     # Добавление цены
     text_x, text_y = 2229, 1257
     price_str = f"{product.price:.2f} руб."
@@ -264,7 +265,8 @@ def process_option2(product, bg, font_path, resize_and_crop_cover, add_rounded_c
     draw.text((text_x, text_y), smart_wrap(product.name.upper()), font=font, fill=(0, 0, 0, 255))
     # Добавление описание
     text_x, text_y = 207, 787
-    draw.text((text_x, text_y), smart_wrap(product.description), font=font, fill=(0, 0, 0, 255))
+    font_description = ImageFont.truetype(font_path, 54)
+    draw.text((text_x, text_y), smart_wrap(product.description, 50), font=font_description, fill=(0, 0, 0, 255))
     # Добавление цены
     text_x, text_y = 373, 1257
     price_str = f"{product.price:.2f} руб."
