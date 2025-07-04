@@ -1,0 +1,251 @@
+:root {
+    --accent: #4f46e5;              /* синий-фиолетовый */
+    --accent-hover: #4338ca;
+    --accent-light: #eef2ff;
+    --danger: #ef4444;
+    --danger-hover: #dc2626;
+    --gray: #6b7280;
+    --gray-light: #63f31c;
+    --gray-dark: #374151;
+    --white: #ffffff;
+    --blue: #e2e9f7;
+}
+
+/* === Текст и кнопки === */
+.text-orange {
+    color: var(--accent);
+}
+
+.btn-orange {
+    background-color: var(--accent);
+    border-color: var(--accent);
+    color: var(--white);
+    font-weight: 500;
+    font-size: 15px;
+    padding: 8px 16px;
+    border-radius: 8px;
+    transition: background-color 0.2s ease;
+}
+
+.btn-orange:hover {
+    background-color: var(--accent-hover);
+    border-color: var(--accent-hover);
+}
+
+.btn-danger {
+    background-color: var(--danger);
+    border-color: var(--danger);
+    color: var(--white);
+    font-weight: 500;
+    font-size: 15px;
+    padding: 8px 16px;
+    border-radius: 8px;
+    transition: background-color 0.2s ease;
+}
+
+.btn-danger:hover {
+    background-color: var(--danger-hover);
+    border-color: var(--danger-hover);
+}
+
+/* === Таблица === */
+.table-responsive {
+    
+    border: 1px solid #bacef3;
+    border-radius: 15px;
+    
+}
+.table-orange {
+    background-color: var(--accent);
+    color: var(--white);
+}
+
+.table-orange th {
+    border-bottom: 2px solid var(--accent-hover);
+}
+
+.table-striped > tbody > tr:nth-child(odd) > * {
+    background-color: var(--accent-light);
+}
+
+.table-hover tbody tr:hover {
+    background-color: rgba(79, 70, 229, 0.08) !important;
+}
+
+.table {
+    font-size: 14px;
+    border-collapse: separate;
+    border-spacing: 0;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+}
+
+.table th {
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 12px;
+    letter-spacing: 0.5px;
+    vertical-align: middle;
+    padding: 12px 16px;
+    background-color: var(--accent);
+    color: var(--white);
+}
+
+.table td {
+    vertical-align: middle;
+    padding: 12px 16px;
+    background-color: var(--white);
+}
+
+/* === Шильдики и цветные элементы === */
+.color-badge {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    border: 1px solid #d1d5db;
+    margin-right: 8px;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+}
+
+.badge {
+    font-weight: 500;
+    padding: 6px 12px;
+    border-radius: 16px;
+    display: inline-block;
+    font-size: 13px;
+}
+
+.badge.bg-stock-success {
+    background-color: #d1fae5;
+    color: #065f46;
+}
+
+.badge.bg-stock-warning {
+    background-color: #fef9c3;
+    color: #92400e;
+}
+
+.badge.bg-stock-danger {
+    background-color: #fee2e2;
+    color: #991b1b;
+}
+
+/* === Фото и карточки === */
+.product-photo {
+    max-height: 60px;
+    width: auto;
+    border-radius: 6px;
+    border: 1px solid #e5e7eb;
+}
+
+/* === Ссылки === */
+.link-orange {
+    color: var(--accent);
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.link-orange:hover {
+    color: var(--accent-hover);
+    text-decoration: underline;
+}
+
+/* === Checkbox & Radio === */
+.form-check-input:checked {
+    background-color: var(--accent);
+    border-color: var(--accent);
+}
+
+/* === Alert === */
+.alert {
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.04);
+    border: 1px solid #e6ecf7;
+    background-color: var(--blue)
+
+    
+}
+
+/* === Контейнеры и форма === */
+.container {
+    background-color: var(--white);
+    border-radius: 12px;
+    padding: 24px;
+    box-shadow: 0 0 0 1px #e5e7eb, 0 1px 2px rgba(0,0,0,0.05);
+    margin-bottom: 32px;
+}
+.fade-in {
+    animation: fadeIn 0.5s ease-in;
+}
+
+.fade-out {
+    animation: fadeOut 0.5s ease-out forwards;
+}
+.pagination {
+    display: flex;
+    flex-wrap: nowrap;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    justify-content: center;
+}
+
+.page-item {
+    display: block;
+    margin: 0 3px;
+}
+
+.page-link {
+    display: block;
+    color: var(--accent);
+    border: 1px solid #dee2e6;
+    padding: 0.5rem 0.75rem;
+    text-decoration: none;
+    border-radius: 4px;
+}
+
+.page-item.active .page-link {
+    background-color: var(--accent);
+    border-color: var(--accent);
+    color: white;
+}
+
+.page-link:hover {
+    color: var(--accent-hover);
+    background-color: var(--accent-light);
+}
+
+.page-item.disabled .page-link {
+    color: #6c757d;
+    pointer-events: none;
+    background-color: #f8f9fa;
+    border-color: #dee2e6;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeOut {
+    from { opacity: 1; transform: translateY(0); }
+    to { opacity: 0; transform: translateY(-10px); }
+}
+
+.close-btn {
+    cursor: pointer;
+    float: right;
+    font-size: 1.5rem;
+    font-weight: bold;
+    line-height: 1;
+    color: #000;
+    opacity: 0.5;
+    transition: opacity 0.2s;
+    margin-left: 15px;
+}
+
+.close-btn:hover {
+    opacity: 0.75;
+}

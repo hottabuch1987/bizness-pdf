@@ -143,7 +143,7 @@ def process_option1(product, bg, font_path, resize_and_crop_cover, add_rounded_c
     start_y = 1730  # Y-координата первого материала
     circle_radius = 20  # Радиус кружочков
     vertical_step = 58  # Расстояние между материалами
-    text_offset = 28  # Отступ текста от кружочка
+    text_offset = 58  # Отступ текста от кружочка
     
     # Получаем материалы продукта
     materials = product.materials.all()
@@ -211,9 +211,9 @@ def process_option1(product, bg, font_path, resize_and_crop_cover, add_rounded_c
             name_width = 0
         
         # Рисуем значение размера (обычным шрифтом)
-        if dim.size:
+        if dim.value:
             size_x = text_x + name_width + 20  # Добавляем небольшой отступ после двоеточия
-            draw.text((size_x, current_y), dim.size, font=size_font, fill=(0, 0, 0, 255))
+            draw.text((size_x, current_y), dim.value, font=size_font, fill=(0, 0, 0, 255))
 
     return Image.alpha_composite(bg, txt_layer)
 
@@ -280,7 +280,7 @@ def process_option2(product, bg, font_path, resize_and_crop_cover, add_rounded_c
     start_y = 1730  # Y-координата первого материала
     circle_radius = 20  # Радиус кружочков
     vertical_step = 58  # Расстояние между материалами
-    text_offset = 28  # Отступ текста от кружочка
+    text_offset = 40  # Отступ текста от кружочка
     
     # Получаем материалы продукта
     materials = product.materials.all()
@@ -348,9 +348,9 @@ def process_option2(product, bg, font_path, resize_and_crop_cover, add_rounded_c
             name_width = 0
         
         # Рисуем значение размера (обычным шрифтом)
-        if dim.size:
+        if dim.value:
             size_x = text_x + name_width + 20  # Добавляем небольшой отступ после двоеточия
-            draw.text((size_x, current_y), dim.size, font=size_font, fill=(0, 0, 0, 255))
+            draw.text((size_x, current_y), dim.value, font=size_font, fill=(0, 0, 0, 255))
 
     return Image.alpha_composite(bg, txt_layer)
 

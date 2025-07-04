@@ -1,10 +1,11 @@
+from django.contrib import messages
 import csv
 import os
 import tempfile
 from io import TextIOWrapper
 
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.conf import settings
-from django.contrib import messages
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 from django.shortcuts import render, redirect
@@ -12,8 +13,8 @@ from django.shortcuts import render, redirect
 from fpdf import FPDF
 from PIL import Image
 
-from .forms import UploadCSVForm, ProductForm
-from .models import Product, Material, Dimensions, ProductMaterial, ProductDimensions
+from .forms import UploadCSVForm, ProductForm, MaterialFormSet, DimensionFormSet
+from .models import Product, Material, Dimension
 from .utils import resize_and_crop_cover, add_rounded_corners, process_option1, process_option2, add_contacts
 
 
@@ -26,6 +27,7 @@ def convert_to_pdf(request):
     if not selected_ids:
         messages.error(request, "Выберите хотя бы один товар.")
         return redirect('product_list')
+
 
     # Инициализация PDF
     pdf = FPDF(orientation='L', unit='mm', format='A4')
@@ -104,23 +106,25 @@ def upload_csv(request):
                 csv_reader.fieldnames = [name.strip('\ufeff').strip() for name in csv_reader.fieldnames if name]
                 
                 created_count = 0
+                updated_count = 0
                 errors = []
                 
                 for i, row in enumerate(csv_reader, start=1):
                     row = {k.strip('\ufeff').strip(): v.strip() for k, v in row.items() if k and k.strip()}
                     
                     try:
+                        # Проверка обязательных полей
                         required_fields = ['Артикул', 'Наименование', 'Цена', 'Остаток', 'Цвет']
-                        if not all(field in row for field in required_fields):
-                            missing = set(required_fields) - set(row.keys())
-                            raise ValueError(f"Отсутствуют поля: {', '.join(missing)}")
+                        missing_fields = [field for field in required_fields if field not in row]
+                        if missing_fields:
+                            raise ValueError(f"Отсутствуют поля: {', '.join(missing_fields)}")
                         
-                        # Основные данные продукта
+                        # Подготовка данных продукта
                         product_data = {
                             'article': row['Артикул'],
                             'name': row['Наименование'],
-                            'price': float(row['Цена'].replace(',', '.')),
-                            'stock': int(row['Остаток']),
+                            'price': float(row['Цена'].replace(',', '.').replace(' ', '')),
+                            'stock': int(row['Остаток'].replace(' ', '')),
                             'color': row['Цвет'],
                             'description': row.get('Описание', ''),
                         }
@@ -133,41 +137,55 @@ def upload_csv(request):
                         
                         # Обработка материалов
                         if 'Материал' in row and row['Материал']:
-                            # Удаляем старые материалы
-                            ProductMaterial.objects.filter(product=product).delete()
+                            # Удаляем старые материалы продукта
+                            Material.objects.filter(product=product).delete()
                             
-                            materials = [m.strip() for m in row['Материал'].split(',')]
+                            # Создаем новые материалы
+                            materials = [m.strip() for m in row['Материал'].split(',') if m.strip()]
                             for material_name in materials:
-                                material, _ = Material.objects.get_or_create(name=material_name)
-                                ProductMaterial.objects.get_or_create(
-                                    product=product, 
-                                    material=material
+                                Material.objects.create(
+                                    product=product,
+                                    name=material_name
                                 )
                         
                         # Обработка габаритов
                         if 'Габариты' in row and row['Габариты']:
-                            # Удаляем старые габариты
-                            ProductDimensions.objects.filter(product=product).delete()
+                            # Удаляем старые габариты продукта
+                            Dimension.objects.filter(product=product).delete()
                             
-                            dimensions_list = [d.strip() for d in row['Габариты'].split(',')]
-                            for dimension_size in dimensions_list:
-                                dimension, _ = Dimensions.objects.get_or_create(size=dimension_size)
-                                ProductDimensions.objects.get_or_create(
+                            # Создаем новые габариты
+                            dimensions = [d.strip() for d in row['Габариты'].split(',') if d.strip()]
+                            for dimension_value in dimensions:
+                                Dimension.objects.create(
                                     product=product,
-                                    dimensions=dimension
+                                    value=dimension_value
                                 )
                         
                         if created:
                             created_count += 1
+                        else:
+                            updated_count += 1
                             
                     except Exception as e:
                         errors.append(f"Строка {i}: {str(e)}")
                         continue
                 
+                # Формируем сообщение о результате
+                if created_count or updated_count:
+                    msg = f"Успешно обработано товаров: {created_count + updated_count} "
+                    msg += f"(новых: {created_count}, обновлено: {updated_count})"
+                    
+                    if errors:
+                        msg += f" | Ошибок: {len(errors)}"
+                        messages.warning(request, msg)
+                    else:
+                        messages.success(request, msg)
+                elif errors:
+                    messages.error(request, f"Все строки содержат ошибки. Ошибок: {len(errors)}")
+                
+                # Сохраняем ошибки в сессии для детализации
                 if errors:
-                    messages.warning(request, f"Успешно загружено {created_count} товаров, ошибки: {len(errors)}")
-                else:
-                    messages.success(request, f'Успешно загружено {created_count} товаров')
+                    request.session['upload_errors'] = errors
                 
                 return redirect('product_list')
             
@@ -180,64 +198,50 @@ def upload_csv(request):
 
 
 def product_list(request):
-    # Получение списка продуктов
-    products = Product.objects.prefetch_related('materials', 'dimensions').all()
+    # Получение списка всех продуктов
+    products_list = Product.objects.prefetch_related('materials', 'dimensions').all()
+    
+    # Настройка пагинации
+    paginator = Paginator(products_list, 15)  # Показывать 15 товаров на странице
+    page = request.GET.get('page')  # Получаем номер текущей страницы из параметра запроса
+    
+    try:
+        products = paginator.page(page)
+    except PageNotAnInteger:
+        # Если параметр page не целое число, показываем первую страницу
+        products = paginator.page(1)
+    except EmptyPage:
+        # Если страница вне диапазона (например, 9999), показываем последнюю страницу
+        products = paginator.page(paginator.num_pages)
+    
     return render(request, 'offer/product_list.html', {'products': products})
 
-
 def edit_product(request, product_id):
-    # Редактирование продукта
     product = get_object_or_404(Product, id=product_id)
     
     if request.method == 'POST':
         form = ProductForm(request.POST, request.FILES, instance=product)
-        if form.is_valid():
-            product = form.save()
-            
-            # Обработка материалов
-            materials_str = form.cleaned_data.get('materials_input', '')
-            materials_list = [m.strip() for m in materials_str.split(',') if m.strip()]
-            
-            ProductMaterial.objects.filter(product=product).delete()
-            for material_name in materials_list:
-                material, _ = Material.objects.get_or_create(name=material_name)
-                ProductMaterial.objects.get_or_create(product=product, material=material)
-
-            dimensions_str = form.cleaned_data.get('dimensions_input', '')
-            dimensions_name_str = form.cleaned_data.get('dimensions_name_input', '')
-            
-            # Создаем списки значений
-            dimensions_list = [d.strip() for d in dimensions_str.split(',') if d.strip()]
-            dimensions_name_list = [n.strip() for n in dimensions_name_str.split(',') if n.strip()]
-
-            ProductDimensions.objects.filter(product=product).delete()
-            
-            for i, dimension_size in enumerate(dimensions_list):
-                name = dimensions_name_list[i] if i < len(dimensions_name_list) else ''
-                
-                dimension, _ = Dimensions.objects.get_or_create(
-                    size=dimension_size,
-                    defaults={'name': name} 
-                )
-
-                if dimension.name != name:
-                    dimension.name = name
-                    dimension.save()
-                
-                ProductDimensions.objects.get_or_create(
-                    product=product,
-                    dimensions=dimension
-                )
-            
+        material_formset = MaterialFormSet(request.POST, instance=product, prefix='materials')
+        dimension_formset = DimensionFormSet(request.POST, instance=product, prefix='dimensions')
+        
+        if form.is_valid() and material_formset.is_valid() and dimension_formset.is_valid():
+            form.save()
+            material_formset.save()
+            dimension_formset.save()
             messages.success(request, 'Товар успешно обновлен')
             return redirect('product_list')
     else:
         form = ProductForm(instance=product)
+        material_formset = MaterialFormSet(instance=product, prefix='materials')
+        dimension_formset = DimensionFormSet(instance=product, prefix='dimensions')
     
     return render(request, 'offer/edit_product.html', {
         'form': form,
+        'material_formset': material_formset,
+        'dimension_formset': dimension_formset,
         'product': product
     })
+
 
 
 def delete_products(request):
@@ -247,4 +251,3 @@ def delete_products(request):
         Product.objects.filter(id__in=product_ids).delete()
         return HttpResponse(status=200)
     return HttpResponse(status=400)
-

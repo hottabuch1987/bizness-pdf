@@ -1,189 +1,378 @@
 {% extends 'offer/base.html' %}
-{% block title %} Редактирование  {% endblock %}
+{% load static %}
+{% block title %} Редактировать {% endblock %}
 
 {% block content %}
-<div class="bg-light py-5 min-vh-100 d-flex justify-content-center align-items-start">
-    <div class="form-wrapper">
-        <div class="container-form">
-            <h2 class="mb-4 text-center">Редактирование товара: {{ product.name }}</h2>
-
-            <form method="post" enctype="multipart/form-data" class="product-form">
-                {% csrf_token %}
-
-                <div class="card mb-4">
-                    <div class="card-body">
-                        <h5 class="card-title text-center mb-3">Основная информация</h5>
-
-                        {% for field in form %}
-                            {% if field.name != 'materials_input' and field.name != 'dimensions_input' and field.name != 'dimensions_name_input' %}
-                                <div class="mb-3">
-                                    <label class="form-label">{{ field.label }}</label>
-                                    {{ field }}
-                                    {% if field.help_text %}
-                                        <small class="form-text text-muted">{{ field.help_text }}</small>
-                                    {% endif %}
-                                    {% for error in field.errors %}
-                                        <div class="alert alert-danger mt-1">{{ error }}</div>
-                                    {% endfor %}
-                                </div>
-                            {% endif %}
-                        {% endfor %}
-
-                        <div class="mb-3">
-                            <label class="form-label">{{ form.materials_input.label }}</label>
-                            {{ form.materials_input }}
-                            <small class="form-text text-muted">Введите названия материалов через запятую</small>
-                            {% for error in form.materials_input.errors %}
-                                <div class="alert alert-danger mt-1">{{ error }}</div>
-                            {% endfor %}
-                        </div>
-
-                        <div class="mb-3">
-                            <label class="form-label">{{ form.dimensions_name_input.label }}</label>
-                            {{ form.dimensions_name_input }}
-                            <small class="form-text text-muted">Введите названия габаритов через запятую</small>
-                            {% for error in form.dimensions_name_input.errors %}
-                                <div class="alert alert-danger mt-1">{{ error }}</div>
-                            {% endfor %}
-                        </div>
-
-                        <div class="mb-3">
-                            <label class="form-label">{{ form.dimensions_input.label }}</label>
-                            {{ form.dimensions_input }}
-                            <small class="form-text text-muted">Введите габариты через запятую</small>
-                            {% for error in form.dimensions_input.errors %}
-                                <div class="alert alert-danger mt-1">{{ error }}</div>
-                            {% endfor %}
-                        </div>
-                    </div>
+<div class="form-wrapper">
+    <div class="container-form">
+        <!-- Блок для отображения сообщений -->
+        <div id="messages-container">
+            {% if messages %}
+                {% for message in messages %}
+                <div class="alert alert-{{ message.tags }} fade-in">
+                    {{ message }}
+                    <span class="close-btn" onclick="this.parentElement.style.display='none'">×</span>
                 </div>
-
-                <div class="d-flex justify-content-center gap-3">
-                    <button type="submit" class="btn btn-primary px-4">Сохранить</button>
-                    <a href="{% url 'product_list' %}" class="btn btn-outline-secondary px-4">Отмена</a>
-                </div>
-            </form>
+                {% endfor %}
+            {% endif %}
         </div>
+
+        <h2>Редактирование товара: {{ product.name }}</h2>
+
+        <form method="post" enctype="multipart/form-data" class="product-form">
+            {% csrf_token %}
+            
+            <!-- Основная форма товара -->
+            <div class="form-section">
+                <h3>Основная информация</h3>
+                <div class="form-grid">
+                    {% for field in form %}
+                        <div class="form-group">
+                            <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                            {{ field }}
+                            {% if field.help_text %}
+                                <small class="form-help">{{ field.help_text }}</small>
+                            {% endif %}
+                            {% for error in field.errors %}
+                                <div class="form-error">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+            
+            <!-- Материалы -->
+            <div class="form-section">
+                <div class="form-section-header">
+                    <h3>Материалы</h3>
+                    <button type="button" id="add-material" class="btn-add">+ Добавить материал</button>
+                </div>
+                {{ material_formset.management_form }}
+                <div id="materials-formset" class="formset">
+                    {% for form in material_formset %}
+                        <div class="formset-item">
+                            {{ form.id }}
+                            <div class="formset-content">
+                                <div class="form-group">
+                                    {{ form.name.label_tag }}
+                                    {{ form.name }}
+                                </div>
+                            </div>
+                            <div class="formset-actions">
+                                {% if form.DELETE %}
+                                    <label class="delete-checkbox">
+                                        {{ form.DELETE }} Удалить
+                                    </label>
+                                {% endif %}
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+            
+            <!-- Размеры -->
+            <div class="form-section">
+                <div class="form-section-header">
+                    <h3>Размеры</h3>
+                    <button type="button" id="add-dimension" class="btn-add">+ Добавить размер</button>
+                </div>
+                {{ dimension_formset.management_form }}
+                <div id="dimensions-formset" class="formset">
+                    {% for form in dimension_formset %}
+                        <div class="formset-item">
+                            {{ form.id }}
+                            <div class="formset-content">
+                                <div class="form-row">
+                                    <div class="form-group half-width">
+                                        {{ form.name.label_tag }}
+                                        {{ form.name }}
+                                    </div>
+                                    <div class="form-group half-width">
+                                        {{ form.value.label_tag }}
+                                        {{ form.value }}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="formset-actions">
+                                {% if form.DELETE %}
+                                    <label class="delete-checkbox">
+                                        {{ form.DELETE }} Удалить
+                                    </label>
+                                {% endif %}
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+            
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">Сохранить изменения</button>
+                <a href="{% url 'product_list' %}" class="btn btn-cancel">Отмена</a>
+            </div>
+        </form>
     </div>
 </div>
-
 
 <style>
     :root {
         --primary: #6366f1;
         --primary-hover: #4f46e5;
-        --bg: #f9fafb;
-        --white: #ffffff;
-        --text: #1f2937;
-        --gray: #6b7280;
-        --border: #e5e7eb;
+        --success: #10b981;
+        --success-bg: #d1fae5;
         --danger: #dc2626;
         --danger-bg: #fee2e2;
+        --danger-hover: #b91c1c;
+        --warning: #f59e0b;
+        --warning-bg: #fef3c7;
+        --info: #3b82f6;
+        --info-bg: #dbeafe;
+        --bg: #e5eef8;
+        --white: #ffffff;
+        --text: #1f2937;
+        --text-light: #6b7280;
+        --border: #e5e7eb;
+        --border-dark: #d1d5db;
+        --radius: 8px;
+        --shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
     }
 
-    .container {
+    /* Анимации */
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(-10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    
+    @keyframes fadeOut {
+        from { opacity: 1; }
+        to { opacity: 0; }
+    }
+
+    .fade-in {
+        animation: fadeIn 0.3s ease-out;
+    }
+
+    .form-wrapper {
+        display: flex;
+        justify-content: center;
+        padding: 2rem 1rem;
+        background-color: var(--bg);
+        min-height: 100vh;
+    }
+
+    .container-form {
         background-color: var(--white);
-        padding: 40px 32px;
-        border-radius: 16px;
-        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
-        max-width: 880px;
-        color: var(--text);
+        padding: 2.5rem;
+        border-radius: var(--radius);
+        box-shadow: var(--shadow);
+        max-width: 800px;
+        width: 100%;
+    }
+
+    /* Стили для сообщений */
+    #messages-container {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        z-index: 1000;
+        max-width: 400px;
+        width: 100%;
+    }
+
+    .alert {
+        padding: 15px 20px;
+        margin-bottom: 15px;
+        border-radius: var(--radius);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        transition: opacity 0.5s ease;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .alert::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        width: 5px;
+    }
+
+    .alert-success {
+        background-color: var(--success-bg);
+        color: #065f46;
+        border-left: 5px solid var(--success);
+    }
+
+    .alert-error {
+        background-color: var(--danger-bg);
+        color: #b91c1c;
+        border-left: 5px solid var(--danger);
+    }
+
+    .alert-info {
+        background-color: var(--info-bg);
+        color: #1e40af;
+        border-left: 5px solid var(--info);
+    }
+
+    .alert-warning {
+        background-color: var(--warning-bg);
+        color: #92400e;
+        border-left: 5px solid var(--warning);
+    }
+
+    .close-btn {
+        cursor: pointer;
+        font-size: 1.5rem;
+        font-weight: bold;
+        margin-left: 15px;
+        opacity: 0.7;
+        transition: opacity 0.2s;
+        flex-shrink: 0;
+    }
+
+    .close-btn:hover {
+        opacity: 1;
     }
 
     h2 {
-        font-size: 24px;
+        font-size: 1.75rem;
         font-weight: 600;
-        margin-bottom: 32px;
-        color: var(--text);
-    }
-
-    .card {
-        background-color: var(--white);
-        border: 1px solid var(--border);
-        border-radius: 12px;
-        box-shadow: 0 1px 6px rgba(0,0,0,0.03);
-        transition: all 0.2s ease-in-out;
-    }
-
-    .card:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 6px 16px rgba(0,0,0,0.06);
-    }
-
-    .card-body {
-        padding: 24px;
-    }
-
-    .card-title {
-        font-size: 18px;
-        font-weight: 600;
-        text-align: center;
-        margin-bottom: 24px;
+        margin-bottom: 1.5rem;
+        color: var(--primary);
+        
+        padding-bottom: 1rem;
         border-bottom: 1px solid var(--border);
-        padding-bottom: 12px;
-        color: var(--text);
     }
 
-    .form-label {
-        font-weight: 500;
-        font-size: 0.95rem;
-        color: var(--text);
-        margin-bottom: 0.5rem;
-        display: block;
-    }
-
-    .product-form input,
-    .product-form select,
-    .product-form textarea {
-        width: 100%;
-        padding: 10px 12px;
-        font-size: 1rem;
+    .form-section {
+        margin-bottom: 2rem;
+        padding: 1.5rem;
+        background: var(--white);
+        border-radius: var(--radius);
         border: 1px solid var(--border);
-        border-radius: 8px;
-        background-color: var(--white);
-        transition: border-color 0.2s, box-shadow 0.2s;
+        box-shadow: var(--shadow);
     }
 
-    .product-form input:focus,
-    .product-form select:focus,
-    .product-form textarea:focus {
+    .form-section-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1.5rem;
+    }
+   
+    h3 {
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: var(--primary);
+        margin: 0;
+    }
+ 
+    .form-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 1.5rem;
+    }
+
+    .form-group {
+        margin-bottom: 1.25rem;
+    }
+
+    label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: 500;
+        color: var(--text);
+        font-size: 0.95rem;
+    }
+
+    .form-help {
+        display: block;
+        margin-top: 0.25rem;
+        font-size: 0.85rem;
+        color: var(--text-light);
+    }
+
+    .form-error {
+        color: var(--danger);
+        font-size: 0.85rem;
+        margin-top: 0.25rem;
+    }
+
+    input, select, textarea {
+        width: 100%;
+        padding: 0.75rem;
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        font-size: 1rem;
+        transition: all 0.2s;
+        background-color: var(--white);
+    }
+
+    input:focus, select:focus, textarea:focus {
         border-color: var(--primary);
         box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
         outline: none;
     }
 
-    .product-form input[type="file"] {
-        padding: 8px;
+    input[type="file"] {
+        padding: 0.5rem;
     }
 
-    .form-text {
-        font-size: 0.85rem;
-        color: var(--gray);
-        margin-top: 0.25rem;
+    .formset {
+        display: flex;
+        flex-direction: column;
+        gap: 1.25rem;
     }
 
-    .alert-danger {
-        background-color: var(--danger-bg);
-        color: var(--danger);
-        border: 1px solid #fca5a5;
-        padding: 8px 12px;
-        border-radius: 8px;
-        font-size: 0.9rem;
-        margin-top: 4px;
+    .formset-item {
+        display: flex;
+        gap: 1rem;
+        padding: 1.25rem;
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        background: var(--bg);
+        align-items: flex-start;
+    }
+
+    .formset-content {
+        flex: 1;
+    }
+
+    .formset-actions {
+        display: flex;
+        align-items: center;
+        min-width: 100px;
+    }
+
+    .form-row {
+        display: flex;
+        gap: 1rem;
+    }
+
+    .half-width {
+        flex: 1;
     }
 
     .btn {
-        border-radius: 9999px;
-        padding: 10px 24px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0.75rem 1.5rem;
         font-size: 1rem;
         font-weight: 500;
+        border-radius: var(--radius);
+        cursor: pointer;
+        transition: all 0.2s;
         border: none;
-        transition: all 0.2s ease;
     }
 
     .btn-primary {
         background-color: var(--primary);
-        color: white;
+        color: var(--white);
     }
 
     .btn-primary:hover {
@@ -191,52 +380,81 @@
         box-shadow: 0 4px 10px rgba(99, 102, 241, 0.3);
     }
 
-    .btn-outline-secondary {
-        background-color: transparent;
-        border: 1px solid var(--gray);
-        color: var(--gray);
+    .btn-add {
+        background-color: var(--success);
+        color: var(--white);
+        padding: 0.5rem 1rem;
+        font-size: 0.9rem;
     }
 
-    .btn-outline-secondary:hover {
-        background-color: var(--gray);
-        color: white;
+    .btn-add:hover {
+        opacity: 0.9;
     }
 
-    .d-flex.gap-3 {
-        gap: 16px;
-        margin-top: 24px;
+    .btn-cancel {
+        background-color: var(--text-light);
+        color: var(--white);
     }
 
-    .form-check {
+    .btn-cancel:hover {
+        background-color: var(--text);
+    }
+
+    .form-actions {
+        display: flex;
+        gap: 1rem;
+        margin-top: 2rem;
+        padding-top: 1.5rem;
+        border-top: 1px solid var(--border);
+    }
+
+    .delete-checkbox {
         display: flex;
         align-items: center;
-        gap: 8px;
+        gap: 0.5rem;
+        color: var(--danger);
+        font-size: 0.9rem;
+        cursor: pointer;
     }
 
-    .form-check-input {
-        margin: 0;
+    .delete-checkbox input[type="checkbox"] {
+        width: auto;
     }
 
-    .bg-light {
-        background-color: #f8f9fa !important;
+    @media (max-width: 768px) {
+        #messages-container {
+            left: 20px;
+            right: 20px;
+            max-width: none;
+        }
+        
+        .container-form {
+            padding: 1.5rem;
+        }
+        
+        .form-section-header {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 1rem;
+        }
+        
+        .form-row {
+            flex-direction: column;
+            gap: 1rem;
+        }
+        
+        .half-width {
+            width: 100%;
+        }
+        
+        .formset-item {
+            flex-direction: column;
+            gap: 1rem;
+        }
+        
+        .form-actions {
+            flex-direction: column;
+        }
     }
-
-    .form-wrapper {
-    width: 100%;
-    display: flex;
-    justify-content: center;
-    padding: 0 1rem;
-}
-
-    .container-form {
-        background-color: var(--white);
-        padding: 40px 32px;
-        border-radius: 16px;
-        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
-        max-width: 800px;
-        width: 100%;
-        margin: 0 auto;
-    }
-
 </style>
 {% endblock %}
