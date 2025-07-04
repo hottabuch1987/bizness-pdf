@@ -60,16 +60,12 @@ def convert_to_pdf(request):
                             product, 
                             bg, 
                             font_path,
-                            resize_and_crop_cover,
-                            add_rounded_corners      
                         )
                     else:
                         result_image = process_option2(
                             product, 
                             bg, 
                             font_path,
-                            resize_and_crop_cover,
-                            add_rounded_corners      
                         )
 
                     # Сохранение временного изображения

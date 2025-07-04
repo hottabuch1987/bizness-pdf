@@ -82,7 +82,7 @@ def smart_wrap(text, max_width=21):
 
 
 # Функция для обработки варианта option1
-def process_option1(product, bg, font_path, resize_and_crop_cover, add_rounded_corners):
+def process_option1(product, bg, font_path):
     """Обработка варианта option1"""
     # Основное изображение
     with Image.open(product.main_photo.path) as product_img:
@@ -219,7 +219,7 @@ def process_option1(product, bg, font_path, resize_and_crop_cover, add_rounded_c
 
 
 # Функция для обработки варианта option2
-def process_option2(product, bg, font_path, resize_and_crop_cover, add_rounded_corners):
+def process_option2(product, bg, font_path):
     """Обработка варианта option2"""
     # Основное изображение
     with Image.open(product.main_photo.path) as product_img:
