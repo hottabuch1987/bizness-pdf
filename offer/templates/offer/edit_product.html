@@ -457,4 +457,77 @@
         }
     }
 </style>
+<script>
+
+    // Добавление новых форм материалов
+    document.querySelector('#add-material').addEventListener('click', function() {
+        const formCount = document.querySelector('#id_materials-TOTAL_FORMS');
+        const container = document.querySelector('#materials-formset');
+        const totalForms = parseInt(formCount.value);
+        
+        // Клонируем первую форму
+        const newForm = container.querySelector('.formset-item').cloneNode(true);
+        
+        // Обновляем индексы в ID и name
+        newForm.innerHTML = newForm.innerHTML.replace(
+            /materials-\d+-/g, 
+            `materials-${totalForms}-`
+        );
+        
+        // Очищаем значения
+        const nameInput = newForm.querySelector('input[name$="-name"]');
+        if (nameInput) nameInput.value = '';
+        
+        // Убираем скрытое поле ID
+        const idInput = newForm.querySelector('input[name$="-id"]');
+        if (idInput) idInput.remove();
+        
+        // Убираем чекбокс удаления
+        const deleteCheckbox = newForm.querySelector('input[name$="-DELETE"]');
+        if (deleteCheckbox) {
+            deleteCheckbox.checked = false;
+            deleteCheckbox.closest('.delete-checkbox').style.display = 'none';
+        }
+        
+        container.appendChild(newForm);
+        formCount.value = totalForms + 1;
+    });
+    
+    // Добавление новых форм размеров
+    document.querySelector('#add-dimension').addEventListener('click', function() {
+        const formCount = document.querySelector('#id_dimensions-TOTAL_FORMS');
+        const container = document.querySelector('#dimensions-formset');
+        const totalForms = parseInt(formCount.value);
+        
+        // Клонируем первую форму
+        const newForm = container.querySelector('.formset-item').cloneNode(true);
+        
+        // Обновляем индексы в ID и name
+        newForm.innerHTML = newForm.innerHTML.replace(
+            /dimensions-\d+-/g, 
+            `dimensions-${totalForms}-`
+        );
+        
+        // Очищаем значения
+        const nameInput = newForm.querySelector('input[name$="-name"]');
+        if (nameInput) nameInput.value = '';
+        
+        const valueInput = newForm.querySelector('input[name$="-value"]');
+        if (valueInput) valueInput.value = '';
+        
+        // Убираем скрытое поле ID
+        const idInput = newForm.querySelector('input[name$="-id"]');
+        if (idInput) idInput.remove();
+        
+        // Убираем чекбокс удаления
+        const deleteCheckbox = newForm.querySelector('input[name$="-DELETE"]');
+        if (deleteCheckbox) {
+            deleteCheckbox.checked = false;
+            deleteCheckbox.closest('.delete-checkbox').style.display = 'none';
+        }
+        
+        container.appendChild(newForm);
+        formCount.value = totalForms + 1;
+    });
+</script>
 {% endblock %}

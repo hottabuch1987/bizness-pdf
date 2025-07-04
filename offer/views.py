@@ -4,7 +4,6 @@ import os
 import tempfile
 from io import TextIOWrapper
 
-from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.conf import settings
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
@@ -194,24 +193,11 @@ def upload_csv(request):
 
 
 def product_list(request):
-    # Получение списка всех продуктов
-    products_list = Product.objects.prefetch_related('materials', 'dimensions').all()
-    
-    # Настройка пагинации
-    paginator = Paginator(products_list, 15)  # Показывать 15 товаров на странице
-    page = request.GET.get('page')  # Получаем номер текущей страницы из параметра запроса
-    
-    try:
-        products = paginator.page(page)
-    except PageNotAnInteger:
-        # Если параметр page не целое число, показываем первую страницу
-        products = paginator.page(1)
-    except EmptyPage:
-        # Если страница вне диапазона (например, 9999), показываем последнюю страницу
-        products = paginator.page(paginator.num_pages)
+    # Получение списка всех продуктов без пагинации
+    products = Product.objects.prefetch_related('materials', 'dimensions').all()
     
     return render(request, 'offer/product_list.html', {'products': products})
-
+  
 def edit_product(request, product_id):
     product = get_object_or_404(Product, id=product_id)
     
