@@ -224,7 +224,7 @@ def edit_product(request, product_id):
                     dimension.name = name
                     dimension.save()
                 
-                ProductDimensions.objects.create(
+                ProductDimensions.objects.get_or_create(
                     product=product,
                     dimensions=dimension
                 )
