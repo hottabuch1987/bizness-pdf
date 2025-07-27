@@ -23,9 +23,34 @@ class ProductForm(forms.ModelForm):
             'name': forms.TextInput(attrs={'class': 'form-control'}),
             'price': forms.NumberInput(attrs={'class': 'form-control'}),
             'stock': forms.NumberInput(attrs={'class': 'form-control'}),
+            'category': forms.TextInput(attrs={'class': 'form-control'}),
             'color': forms.TextInput(attrs={'class': 'form-control'}),
             
         }
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Делаем поля обязательными только при создании нового товара
+        if not self.instance.pk:
+            self.fields['main_photo'].required = True
+            self.fields['additional_photo1'].required = True
+            self.fields['additional_photo2'].required = True
+
+    def clean(self):
+        cleaned_data = super().clean()
+        # Для существующих товаров проверяем, что фото либо уже есть, либо загружены новые
+        if self.instance.pk:
+            main_photo = cleaned_data.get('main_photo')
+            additional_photo1 = cleaned_data.get('additional_photo1')
+            additional_photo2 = cleaned_data.get('additional_photo2')
+            
+            if not main_photo and not self.instance.main_photo:
+                self.add_error('main_photo', "Основное изображение обязательно")
+            if not additional_photo1 and not self.instance.additional_photo1:
+                self.add_error('additional_photo1', "Дополнительное изображение 1 обязательно")
+            if not additional_photo2 and not self.instance.additional_photo2:
+                self.add_error('additional_photo2', "Дополнительное изображение 2 обязательно")
+        
+        return cleaned_data
 
 MaterialFormSet = inlineformset_factory(
     Product,

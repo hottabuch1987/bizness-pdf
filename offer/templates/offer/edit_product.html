@@ -1,533 +1,419 @@
 {% extends 'offer/base.html' %}
 {% load static %}
-{% block title %} Редактировать {% endblock %}
+{% block title %}Редактировать{% endblock %}
 
 {% block content %}
-<div class="form-wrapper">
-    <div class="container-form">
-        <!-- Блок для отображения сообщений -->
-        <div id="messages-container">
-            {% if messages %}
-                {% for message in messages %}
-                <div class="alert alert-{{ message.tags }} fade-in">
-                    {{ message }}
-                    <span class="close-btn" onclick="this.parentElement.style.display='none'">×</span>
+
+<main>
+    <section class="edit">
+        <div class="container">
+            <!-- Блок сообщений -->
+            <div id="messages-container">
+                {% if messages %}
+                    {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }} fade-in">
+                        {{ message }}
+                        <span class="close-btn">×</span>
+                    </div>
+                    {% endfor %}
+                {% endif %}
+                
+                <!-- Вывод ошибок формы -->
+                {% if form.errors or material_formset.errors or dimension_formset.errors %}
+                <div class="alert alert-error fade-in">
+                    Пожалуйста, исправьте ошибки в форме.
+                    <span class="close-btn">×</span>
                 </div>
-                {% endfor %}
-            {% endif %}
-        </div>
+                {% endif %}
+            </div>
 
-        <h2>Редактирование товара: {{ product.name }}</h2>
+            <a href="{% url 'product_list' %}" class="edit__back"><img src="{% static 'images/arrow-back.svg' %}">Назад</a>
+            <h2 class="edit__title">Панель администратора</h2>
+            <h2 class="edit__name"><span class="bold">{{ product.name|default:"Новый товар" }}</span></h2>
 
-        <form method="post" enctype="multipart/form-data" class="product-form">
-            {% csrf_token %}
-            
-            <!-- Основная форма товара -->
-            <div class="form-section">
-                <h3>Основная информация</h3>
-                <div class="form-grid">
-                    {% for field in form %}
-                        <div class="form-group">
-                            <label for="{{ field.id_for_label }}">{{ field.label }}</label>
-                            {{ field }}
-                            {% if field.help_text %}
-                                <small class="form-help">{{ field.help_text }}</small>
-                            {% endif %}
-                            {% for error in field.errors %}
+            <form method="post" enctype="multipart/form-data" id="product-form">
+                {% csrf_token %}
+                
+                <!-- Основная информация -->
+                <div class="edit__info">
+                    <h2>Основная информация</h2>
+                    
+                    <div class="edit__wrapper">
+                        <label>
+                            Артикул
+                            {{ form.article }}
+                            {% for error in form.article.errors %}
                                 <div class="form-error">{{ error }}</div>
                             {% endfor %}
-                        </div>
-                    {% endfor %}
+                        </label>
+                        <label>
+                            Наименование
+                            {{ form.name }}
+                            {% for error in form.name.errors %}
+                                <div class="form-error">{{ error }}</div>
+                            {% endfor %}
+                        </label>
+                    </div>
+                    
+                    <div class="edit__wrapper">
+                        <label>
+                            Цена 
+                            {{ form.price }}
+                            {% for error in form.price.errors %}
+                                <div class="form-error">{{ error }}</div>
+                            {% endfor %}
+                        </label>
+                        <label>
+                            Остаток 
+                            {{ form.stock }}
+                            {% for error in form.stock.errors %}
+                                <div class="form-error">{{ error }}</div>
+                            {% endfor %}
+                        </label>
+                    </div>
+                    
+                    <div class="edit__wrapper">
+                        <label>
+                            Цвет
+                            {{ form.color }}
+                            {% for error in form.color.errors %}
+                                <div class="form-error">{{ error }}</div>
+                            {% endfor %}
+                        </label>
+                        <label>
+                            Категория
+                            {{ form.category }}
+                            {% for error in form.category.errors %}
+                                <div class="form-error">{{ error }}</div>
+                            {% endfor %}
+                        </label>
+                    </div>
+                    
+                    <div class="edit__wrapper">
+                        <label>
+                            Описание
+                            {{ form.description }}
+                            {% for error in form.description.errors %}
+                                <div class="form-error">{{ error }}</div>
+                            {% endfor %}
+                        </label>
+                    </div>
+                    
+                    <div class="edit__wrapper">
+                        <h2> Изображения товара <span class="required">*</span></h2>
+                        <label class="edit__file">
+                            Основное изображение <span class="required">*</span>
+                            <div>
+                                {% if form.instance.main_photo %}
+                                    <img src="{{ form.instance.main_photo.url }}" width="50">
+                                {% else %}
+                                    <img src="{% static 'images/attachment.svg' %}">
+                                    <p>Выбрать файл</p>
+                                {% endif %}
+                            </div>
+                            {{ form.main_photo }}
+                            {% for error in form.main_photo.errors %}
+                                <div class="form-error">{{ error }}</div>
+                            {% endfor %}
+                        </label>
+                        
+                        <label class="edit__file">
+                            Доп. изображение 1 <span class="required">*</span>
+                            <div>
+                                {% if form.instance.additional_photo1 %}
+                                    <img src="{{ form.instance.additional_photo1.url }}" width="50">
+                                {% else %}
+                                    <img src="{% static 'images/attachment.svg' %}">
+                                    <p>Выбрать файл</p>
+                                {% endif %}
+                            </div>
+                            {{ form.additional_photo1 }}
+                            {% for error in form.additional_photo1.errors %}
+                                <div class="form-error">{{ error }}</div>
+                            {% endfor %}
+                        </label>
+                        
+                        <label class="edit__file">
+                            Доп. изображение 2 <span class="required">*</span>
+                            <div>
+                                {% if form.instance.additional_photo2 %}
+                                    <img src="{{ form.instance.additional_photo2.url }}" width="50">
+                                {% else %}
+                                    <img src="{% static 'images/attachment.svg' %}">
+                                    <p>Выбрать файл</p>
+                                {% endif %}
+                            </div>
+                            {{ form.additional_photo2 }}
+                            {% for error in form.additional_photo2.errors %}
+                                <div class="form-error">{{ error }}</div>
+                            {% endfor %}
+                        </label>
+                    </div>
                 </div>
-            </div>
-            
-            <!-- Материалы -->
-            <div class="form-section">
-                <div class="form-section-header">
-                    <h3>Материалы</h3>
-                    <button type="button" id="add-material" class="btn-add">+ Добавить материал</button>
-                </div>
-                {{ material_formset.management_form }}
-                <div id="materials-formset" class="formset">
-                    {% for form in material_formset %}
-                        <div class="formset-item">
+                
+                <!-- Блок материалов -->
+                <br>
+                <br>
+                <div class="formset-container">
+                    <h2>Материалы</h2>
+                    <br>
+                    
+                    {{ material_formset.management_form }}
+                    <div id="materials-formset">
+                        {% for form in material_formset %}
+                        <div class="formset-item material-form">
                             {{ form.id }}
-                            <div class="formset-content">
-                                <div class="form-group">
-                                    {{ form.name.label_tag }}
+                            <div style="flex-grow: 0;">
+                                <label>
+                                    Материал
                                     {{ form.name }}
-                                </div>
+                                </label>
+                                {% for error in form.name.errors %}
+                                    <div class="form-error">{{ error }}</div>
+                                {% endfor %}
+                            <label class="delete-label">
+                                Удалить: {{ form.DELETE }}
+                            </label>
                             </div>
-                            <div class="formset-actions">
-                                {% if form.DELETE %}
-                                    <label class="delete-checkbox">
-                                        {{ form.DELETE }} Удалить
-                                    </label>
-                                {% endif %}
-                            </div>
+                            
+                           
                         </div>
-                    {% endfor %}
+                        {% endfor %}
+                    </div>
+                    
+                    <div class="formset-footer">
+                        <button type="button" id="add-material" class="edit__button">+ Добавить материал</button>
+                    </div>
                 </div>
-            </div>
-            
-            <!-- Размеры -->
-            <div class="form-section">
-                <div class="form-section-header">
-                    <h3>Размеры</h3>
-                    <button type="button" id="add-dimension" class="btn-add">+ Добавить размер</button>
-                </div>
-                {{ dimension_formset.management_form }}
-                <div id="dimensions-formset" class="formset">
-                    {% for form in dimension_formset %}
-                        <div class="formset-item">
+
+                <!-- Блок размеров -->
+                <div class="formset-container">
+                    <h2>Размеры</h2>
+                    <br>
+                    
+                    {{ dimension_formset.management_form }}
+                    <div id="dimensions-formset">
+                        {% for form in dimension_formset %}
+                        <div class="formset-item dimension-form">
                             {{ form.id }}
-                            <div class="formset-content">
-                                <div class="form-row">
-                                    <div class="form-group half-width">
-                                        {{ form.name.label_tag }}
-                                        {{ form.name }}
-                                    </div>
-                                    <div class="form-group half-width">
-                                        {{ form.value.label_tag }}
-                                        {{ form.value }}
-                                    </div>
-                                </div>
+                            <div>
+                                <label>
+                                    Название
+                                    {{ form.name }}
+                                </label>
+                                <label>
+                                    Значение
+                                    {{ form.value }}
+                                </label>
+                                {% for error in form.value.errors %}
+                                    <div class="form-error">{{ error }}</div>
+                                {% endfor %}
+                                <label class="delete-label">
+                                Удалить: {{ form.DELETE }}
+                            </label>
                             </div>
-                            <div class="formset-actions">
-                                {% if form.DELETE %}
-                                    <label class="delete-checkbox">
-                                        {{ form.DELETE }} Удалить
-                                    </label>
-                                {% endif %}
-                            </div>
+                           
                         </div>
-                    {% endfor %}
+                        {% endfor %}
+                    </div>
+                    
+                    <div class="formset-footer">
+                        <button type="button" id="add-dimension" class="edit__button">+ Добавить размер</button>
+                    </div>
                 </div>
+                
+                <div class="edit__wrapper">
+                    <button type="submit" class="edit__button">Сохранить изменения</button>
+                    <a href="{% url 'product_list' %}" class="edit__button2">Отмена</a>
+                </div>
+            </form>
+        </div>
+    </section>
+</main>
+
+<script>
+    // Функция для создания новой формы материала
+    function createMaterialForm(index) {
+        const newForm = document.createElement('div');
+        newForm.className = 'formset-item material-form';
+        newForm.innerHTML = `
+            <div style="flex-grow: 0;">
+                <label>
+                    Материал
+                    <input type="text" name="materials-${index}-name" id="id_materials-${index}-name">
+                </label>
             </div>
+            <button type="button" class="delete-formset">Удалить</button>
+            <input type="hidden" name="materials-${index}-DELETE" id="id_materials-${index}-DELETE">
+            <input type="hidden" name="materials-${index}-id" id="id_materials-${index}-id">
+        `;
+        return newForm;
+    }
+
+    // Функция для создания новой формы размера
+    function createDimensionForm(index) {
+        const newForm = document.createElement('div');
+        newForm.className = 'formset-item dimension-form';
+        newForm.innerHTML = `
+            <div>
+                <label>
+                    Название
+                    <input type="text" name="dimensions-${index}-name" id="id_dimensions-${index}-name">
+                </label>
+                <label>
+                    Значение
+                    <input type="text" name="dimensions-${index}-value" id="id_dimensions-${index}-value">
+                </label>
+            </div>
+            <button type="button" class="delete-formset">Удалить</button>
+            <input type="hidden" name="dimensions-${index}-DELETE" id="id_dimensions-${index}-DELETE">
+            <input type="hidden" name="dimensions-${index}-id" id="id_dimensions-${index}-id">
+        `;
+        return newForm;
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        // Обработчик добавления материала
+        document.getElementById('add-material').addEventListener('click', function() {
+            const container = document.getElementById('materials-formset');
+            const totalForms = document.getElementById('id_materials-TOTAL_FORMS');
+            const index = parseInt(totalForms.value);
             
-            <div class="form-actions">
-                <button type="submit" class="btn btn-primary">Сохранить изменения</button>
-                <a href="{% url 'product_list' %}" class="btn btn-cancel">Отмена</a>
-            </div>
-        </form>
-    </div>
-</div>
+            const newForm = createMaterialForm(index);
+            container.appendChild(newForm);
+            totalForms.value = index + 1;
+            
+            // Добавляем обработчик для новой кнопки удаления
+            newForm.querySelector('.delete-formset').addEventListener('click', function() {
+                handleDeleteFormset(this, 'materials');
+            });
+        });
+
+        
+        // Обработчик добавления размера
+        document.getElementById('add-dimension').addEventListener('click', function() {
+            const container = document.getElementById('dimensions-formset');
+            const totalForms = document.getElementById('id_dimensions-TOTAL_FORMS');
+            const index = parseInt(totalForms.value);
+            
+            const newForm = createDimensionForm(index);
+            container.appendChild(newForm);
+            totalForms.value = index + 1;
+            
+            // Добавляем обработчик для новой кнопки удаления
+            newForm.querySelector('.delete-formset').addEventListener('click', function() {
+                handleDeleteFormset(this, 'dimensions');
+            });
+        });
+
+        // Общая функция для обработки удаления
+        function handleDeleteFormset(button, prefix) {
+            const formItem = button.closest('.formset-item');
+            const deleteInput = formItem.querySelector(`input[name^="${prefix}-"][name$="-DELETE"]`);
+            const idInput = formItem.querySelector(`input[name^="${prefix}-"][name$="-id"]`);
+            
+            if (deleteInput) {
+                if (idInput && idInput.value) {
+                    // Для существующих записей - помечаем для удаления
+                    deleteInput.value = 'on';
+                    formItem.style.display = 'none';
+                    
+                    // Отключаем все поля ввода, кроме DELETE и id
+                    formItem.querySelectorAll(`input:not([name^="${prefix}-"][name$="-DELETE"]):not([name^="${prefix}-"][name$="-id"]), select, textarea`).forEach(input => {
+                        input.disabled = true;
+                    });
+                } else {
+                    // Для новых записей - просто удаляем элемент
+                    formItem.remove();
+                    
+                    // Обновляем индексы оставшихся форм
+                    const forms = document.querySelectorAll(`.${prefix}-form`);
+                    const totalForms = document.getElementById(`id_${prefix}-TOTAL_FORMS`);
+                    totalForms.value = forms.length;
+                    
+                    forms.forEach((form, index) => {
+                        // Обновляем имена всех полей в форме
+                        form.querySelectorAll('input, select, textarea').forEach(field => {
+                            const name = field.name.replace(new RegExp(`${prefix}-\\d+-`), `${prefix}-${index}-`);
+                            field.name = name;
+                            if (field.id) {
+                                field.id = `id_${name}`;
+                            }
+                        });
+                    });
+                }
+            }
+        }
+    });
+
+</script>
 
 <style>
-    :root {
-        --primary: #6366f1;
-        --primary-hover: #4f46e5;
-        --success: #10b981;
-        --success-bg: #d1fae5;
-        --danger: #dc2626;
-        --danger-bg: #fee2e2;
-        --danger-hover: #b91c1c;
-        --warning: #f59e0b;
-        --warning-bg: #fef3c7;
-        --info: #3b82f6;
-        --info-bg: #dbeafe;
-        --bg: #e5eef8;
-        --white: #ffffff;
-        --text: #1f2937;
-        --text-light: #6b7280;
-        --border: #e5e7eb;
-        --border-dark: #d1d5db;
-        --radius: 8px;
-        --shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-    }
-
-    /* Анимации */
-    @keyframes fadeIn {
-        from { opacity: 0; transform: translateY(-10px); }
-        to { opacity: 1; transform: translateY(0); }
+    .formset-container {
+        margin-bottom: 30px;
+        border: 1px solid #eee;
+        padding: 20px;
+        border-radius: 5px;
+        background: #f9f9f9;
     }
     
-    @keyframes fadeOut {
-        from { opacity: 1; }
-        to { opacity: 0; }
-    }
-
-    .fade-in {
-        animation: fadeIn 0.3s ease-out;
-    }
-
-    .form-wrapper {
-        display: flex;
-        justify-content: center;
-        padding: 2rem 1rem;
-        background-color: var(--bg);
-        min-height: 100vh;
-    }
-
-    .container-form {
-        background-color: var(--white);
-        padding: 2.5rem;
-        border-radius: var(--radius);
-        box-shadow: var(--shadow);
-        max-width: 800px;
-        width: 100%;
-    }
-
-    /* Стили для сообщений */
-    #messages-container {
-        position: fixed;
-        top: 20px;
-        right: 20px;
-        z-index: 1000;
-        max-width: 400px;
-        width: 100%;
-    }
-
-    .alert {
-        padding: 15px 20px;
-        margin-bottom: 15px;
-        border-radius: var(--radius);
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-        transition: opacity 0.5s ease;
-        position: relative;
-        overflow: hidden;
-    }
-
-    .alert::before {
-        content: '';
-        position: absolute;
-        left: 0;
-        top: 0;
-        bottom: 0;
-        width: 5px;
-    }
-
-    .alert-success {
-        background-color: var(--success-bg);
-        color: #065f46;
-        border-left: 5px solid var(--success);
-    }
-
-    .alert-error {
-        background-color: var(--danger-bg);
-        color: #b91c1c;
-        border-left: 5px solid var(--danger);
-    }
-
-    .alert-info {
-        background-color: var(--info-bg);
-        color: #1e40af;
-        border-left: 5px solid var(--info);
-    }
-
-    .alert-warning {
-        background-color: var(--warning-bg);
-        color: #92400e;
-        border-left: 5px solid var(--warning);
-    }
-
-    .close-btn {
-        cursor: pointer;
-        font-size: 1.5rem;
-        font-weight: bold;
-        margin-left: 15px;
-        opacity: 0.7;
-        transition: opacity 0.2s;
-        flex-shrink: 0;
-    }
-
-    .close-btn:hover {
-        opacity: 1;
-    }
-
-    h2 {
-        font-size: 1.75rem;
-        font-weight: 600;
-        margin-bottom: 1.5rem;
-        color: var(--primary);
-        
-        padding-bottom: 1rem;
-        border-bottom: 1px solid var(--border);
-    }
-
-    .form-section {
-        margin-bottom: 2rem;
-        padding: 1.5rem;
-        background: var(--white);
-        border-radius: var(--radius);
-        border: 1px solid var(--border);
-        box-shadow: var(--shadow);
-    }
-
-    .form-section-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 1.5rem;
-    }
-   
-    h3 {
-        font-size: 1.25rem;
-        font-weight: 600;
-        color: var(--primary);
-        margin: 0;
-    }
- 
-    .form-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-        gap: 1.5rem;
-    }
-
-    .form-group {
-        margin-bottom: 1.25rem;
-    }
-
-    label {
-        display: block;
-        margin-bottom: 0.5rem;
-        font-weight: 500;
-        color: var(--text);
-        font-size: 0.95rem;
-    }
-
-    .form-help {
-        display: block;
-        margin-top: 0.25rem;
-        font-size: 0.85rem;
-        color: var(--text-light);
-    }
-
-    .form-error {
-        color: var(--danger);
-        font-size: 0.85rem;
-        margin-top: 0.25rem;
-    }
-
-    input, select, textarea {
-        width: 100%;
-        padding: 0.75rem;
-        border: 1px solid var(--border);
-        border-radius: var(--radius);
-        font-size: 1rem;
-        transition: all 0.2s;
-        background-color: var(--white);
-    }
-
-    input:focus, select:focus, textarea:focus {
-        border-color: var(--primary);
-        box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
-        outline: none;
-    }
-
-    input[type="file"] {
-        padding: 0.5rem;
-    }
-
-    .formset {
-        display: flex;
-        flex-direction: column;
-        gap: 1.25rem;
-    }
-
     .formset-item {
         display: flex;
-        gap: 1rem;
-        padding: 1.25rem;
-        border: 1px solid var(--border);
-        border-radius: var(--radius);
-        background: var(--bg);
-        align-items: flex-start;
+        align-items: flex-end;
+        gap: 15px;
+        margin-bottom: 15px;
+        padding-bottom: 15px;
+        border-bottom: 1px dashed #ddd;
     }
-
-    .formset-content {
-        flex: 1;
-    }
-
-    .formset-actions {
-        display: flex;
-        align-items: center;
-        min-width: 100px;
-    }
-
-    .form-row {
-        display: flex;
-        gap: 1rem;
-    }
-
-    .half-width {
-        flex: 1;
-    }
-
-    .btn {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        padding: 0.75rem 1.5rem;
-        font-size: 1rem;
-        font-weight: 500;
-        border-radius: var(--radius);
-        cursor: pointer;
-        transition: all 0.2s;
-        border: none;
-    }
-
-    .btn-primary {
-        background-color: var(--primary);
-        color: var(--white);
-    }
-
-    .btn-primary:hover {
-        background-color: var(--primary-hover);
-        box-shadow: 0 4px 10px rgba(99, 102, 241, 0.3);
-    }
-
-    .btn-add {
-        background-color: var(--success);
-        color: var(--white);
-        padding: 0.5rem 1rem;
-        font-size: 0.9rem;
-    }
-
-    .btn-add:hover {
-        opacity: 0.9;
-    }
-
-    .btn-cancel {
-        background-color: var(--text-light);
-        color: var(--white);
-    }
-
-    .btn-cancel:hover {
-        background-color: var(--text);
-    }
-
-    .form-actions {
-        display: flex;
-        gap: 1rem;
-        margin-top: 2rem;
-        padding-top: 1.5rem;
-        border-top: 1px solid var(--border);
-    }
-
-    .delete-checkbox {
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-        color: var(--danger);
-        font-size: 0.9rem;
-        cursor: pointer;
-    }
-
-    .delete-checkbox input[type="checkbox"] {
-        width: auto;
-    }
-
-    @media (max-width: 768px) {
-        #messages-container {
-            left: 20px;
-            right: 20px;
-            max-width: none;
-        }
-        
-        .container-form {
-            padding: 1.5rem;
-        }
-        
-        .form-section-header {
-            flex-direction: column;
-            align-items: flex-start;
-            gap: 1rem;
-        }
-        
-        .form-row {
-            flex-direction: column;
-            gap: 1rem;
-        }
-        
-        .half-width {
-            width: 100%;
-        }
-        
-        .formset-item {
-            flex-direction: column;
-            gap: 1rem;
-        }
-        
-        .form-actions {
-            flex-direction: column;
-        }
-    }
-</style>
-<script>
-
-    // Добавление новых форм материалов
-    document.querySelector('#add-material').addEventListener('click', function() {
-        const formCount = document.querySelector('#id_materials-TOTAL_FORMS');
-        const container = document.querySelector('#materials-formset');
-        const totalForms = parseInt(formCount.value);
-        
-        // Клонируем первую форму
-        const newForm = container.querySelector('.formset-item').cloneNode(true);
-        
-        // Обновляем индексы в ID и name
-        newForm.innerHTML = newForm.innerHTML.replace(
-            /materials-\d+-/g, 
-            `materials-${totalForms}-`
-        );
-        
-        // Очищаем значения
-        const nameInput = newForm.querySelector('input[name$="-name"]');
-        if (nameInput) nameInput.value = '';
-        
-        // Убираем скрытое поле ID
-        const idInput = newForm.querySelector('input[name$="-id"]');
-        if (idInput) idInput.remove();
-        
-        // Убираем чекбокс удаления
-        const deleteCheckbox = newForm.querySelector('input[name$="-DELETE"]');
-        if (deleteCheckbox) {
-            deleteCheckbox.checked = false;
-            deleteCheckbox.closest('.delete-checkbox').style.display = 'none';
-        }
-        
-        container.appendChild(newForm);
-        formCount.value = totalForms + 1;
-    });
     
-    // Добавление новых форм размеров
-    document.querySelector('#add-dimension').addEventListener('click', function() {
-        const formCount = document.querySelector('#id_dimensions-TOTAL_FORMS');
-        const container = document.querySelector('#dimensions-formset');
-        const totalForms = parseInt(formCount.value);
-        
-        // Клонируем первую форму
-        const newForm = container.querySelector('.formset-item').cloneNode(true);
-        
-        // Обновляем индексы в ID и name
-        newForm.innerHTML = newForm.innerHTML.replace(
-            /dimensions-\d+-/g, 
-            `dimensions-${totalForms}-`
-        );
-        
-        // Очищаем значения
-        const nameInput = newForm.querySelector('input[name$="-name"]');
-        if (nameInput) nameInput.value = '';
-        
-        const valueInput = newForm.querySelector('input[name$="-value"]');
-        if (valueInput) valueInput.value = '';
-        
-        // Убираем скрытое поле ID
-        const idInput = newForm.querySelector('input[name$="-id"]');
-        if (idInput) idInput.remove();
-        
-        // Убираем чекбокс удаления
-        const deleteCheckbox = newForm.querySelector('input[name$="-DELETE"]');
-        if (deleteCheckbox) {
-            deleteCheckbox.checked = false;
-            deleteCheckbox.closest('.delete-checkbox').style.display = 'none';
-        }
-        
-        container.appendChild(newForm);
-        formCount.value = totalForms + 1;
-    });
-</script>
+    .formset-item:last-child {
+        border-bottom: none;
+        margin-bottom: 0;
+        padding-bottom: 0;
+    }
+    
+    .formset-footer {
+        margin-top: 20px;
+    }
+    
+    .delete-formset {
+        background: none;
+        color: #000000;
+        border: none;
+        cursor: pointer;
+        padding: 5px 10px;
+        height: fit-content;
+    }
+    
+    .delete-formset:hover {
+        text-decoration: underline;
+    }
+    
+    .edit__images-wrapper {
+        margin-top: 20px;
+    }
+    
+    .edit__file-container {
+        margin-bottom: 15px;
+    }
+    
+    .edit__file {
+        display: block;
+        margin-bottom: 10px;
+    }
+    
+    .file-preview {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-top: 5px;
+    }
+    
+    .file-preview img {
+        width: 50px;
+        height: 50px;
+        object-fit: cover;
+    }
+    
+</style>
 {% endblock %}

@@ -1,5 +1,6 @@
 from django.db import models
 
+
 class Product(models.Model):
     article = models.CharField("Артикул", max_length=100, unique=True)
     name = models.CharField("Наименование", max_length=255)
@@ -10,6 +11,7 @@ class Product(models.Model):
     additional_photo1 = models.ImageField("Доп. фото №1", upload_to='products/additional/')
     additional_photo2 = models.ImageField("Доп. фото №2", upload_to='products/additional/')
     description = models.TextField("Описание", blank=True, null=True)
+    category = models.CharField("Товарная Группа", max_length=150)
 
     class Meta:
         verbose_name = "Товар"

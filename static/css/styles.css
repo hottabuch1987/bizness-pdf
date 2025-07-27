@@ -1,0 +1,661 @@
+html, body, div, span, applet, object, iframe,h1, h2, h3, h4, h5, h6, p, blockquote, pre,a, abbr, acronym, address, big, cite, code,del, dfn, em, img, ins, kbd, q, s, samp,small, strike, strong, sub, sup, tt, var,
+b, u, i, center,dl, dt, dd, ol, ul, li,fieldset, form, label, legend,table, caption, tbody, tfoot, thead, tr, th, td,article, aside, canvas, details, embed,figure, figcaption, footer, header, hgroup,
+menu, nav, output, ruby, section, summary,time, mark, audio, video {
+	margin: 0;	padding: 0;	border: 0;	font-size: 100%;	font: inherit;	vertical-align: baseline;
+}
+article, aside, details, figcaption, figure,footer, header, hgroup, menu, nav, section {display: block;}
+body {	line-height: 1;}
+ol, ul {	list-style: none;}
+blockquote, q {	quotes: none;}
+blockquote:before, blockquote:after,q:before, q:after {	content: '';	content: none;}
+table {	border-collapse: collapse;	border-spacing: 0;}
+*,html{box-sizing: border-box;}
+
+body {
+}
+
+a {
+    color: #222;
+    text-decoration: none;
+    cursor: pointer;
+} 
+
+section {
+	font-family: "Poppins", sans-serif;
+	font-weight: 400;
+	font-size: 20px;
+	color: #222;
+}
+
+.container {
+    width: 1748px;
+    margin: 0 auto;
+    padding: 64px 0;
+}
+
+.admin__title, .edit__title {
+	font-weight: 500;
+	font-size: 36px;
+	color: #222;
+	margin-bottom: 40px;
+}
+
+.bold {
+	font-weight: 600;
+}
+
+.admin {
+
+}
+
+.admin__wrapper {
+	display: flex;
+	gap: 24px;
+}
+
+.admin__button {
+	width: 265px;
+	height: 58px;
+	display: flex;
+    align-items: center;
+    justify-content: center;
+	border-radius: 8px; 
+	background: #0c42a8;
+	
+	font-weight: 500;
+	font-size: 20px;
+	color: #fff;
+} 
+
+.admin__button:hover {
+	opacity: 0.9;
+} 
+
+.admin__button2:hover {
+	opacity: 0.8;
+} 
+
+button.admin__button { 
+	width: 161px;
+	height: 52px;
+	padding: 0 24px;
+	border: 0px; 
+	appearance: none;  
+	cursor: pointer;
+} 
+
+.admin__button2 {
+	width: 256px;
+	height: 58px;
+	display: flex;
+    align-items: center;
+    justify-content: center;
+	border-radius: 8px;
+	border: 2px solid #0c42a8; 
+	background: #fff;
+	
+	font-weight: 500;
+	font-size: 20px;
+	color: #0c42a8;
+}
+
+ 
+
+
+.admin__form {
+	display: flex;
+	justify-content: space-between;
+	align-items: flex-end;
+	gap: 10px;
+	
+	border-radius: 12px;
+	padding: 24px;
+	width: 100%; 
+	
+	box-shadow: 0 24px 48px 0 rgba(230, 235, 245, 0.4), 0 1px 4px 0 #e3ebfc;
+	background: #fff;
+	
+	margin: 24px 0;
+}
+
+ 
+.admin__form input,
+.admin__form select {
+    border: none;                
+    outline: none;               
+    box-shadow: none;            
+    background: transparent;     
+    padding: 0;                  
+    margin: 0;                   
+    font: inherit;               
+}
+
+ 
+.admin__form input:focus,
+.admin__form select:focus {
+    outline: none;               
+    box-shadow: none;           
+}
+
+
+
+
+.admin__form label {
+	display: flex;
+	position: relative;
+	width: 100%;
+	flex-direction: column;
+	gap: 4px;
+	
+	font-weight: 400;
+	font-size: 14px;
+	line-height: 143%;  
+	
+	border: 0px;
+}
+
+.admin__form label img {
+	width: 24px;
+    height: 24px;
+    position: absolute;
+    top: 38px;
+    right: 16px; 
+    z-index: 2;
+}
+
+.admin__select-img { 
+    pointer-events: none; /* Чтобы избежать клика по иконке */ 
+}
+
+.admin__form input {
+	display: flex;
+	width: 374px;
+	min-height: 52px; 
+	max-height: 52px; 
+	background: #f4f8ff; 
+	border-radius: 4px;
+	padding: 14px 40px 14px 16px;
+	
+	font-weight: 400;
+	font-size: 14px;
+	line-height: 143%; 
+	
+	border: 0px;
+}
+
+
+.admin__form select {  
+    -webkit-appearance: none; /* Для Chrome и Safari */  
+    -moz-appearance: none; /* Для Firefox */  
+    appearance: none; /* Для всех современных браузеров */  
+    background-color: white; /* Важно */  
+}  
+.admin__form select::-ms-expand {  
+    display: none; /* Удаляем ненужную стрелку */  
+}  
+
+.admin__form select {
+	border: none;    
+	
+	display: flex;
+	width: 100%; 
+	min-height: 52px; 
+	max-height: 52px; 
+	background: #f4f8ff; 
+	border-radius: 4px;
+	padding: 14px 16px;
+	
+	font-weight: 400;
+	font-size: 14px;
+	line-height: 143%;   
+}
+  
+ 
+ 
+
+
+.admin__form option {
+	display: flex;
+	width: 100%;
+	background: #f4f8ff; 
+	border-radius: 4px; 
+	
+	font-weight: 400;
+	font-size: 14px;
+	line-height: 143%; 
+	
+	
+	margin: 14px 16px;
+	
+	border: 0px; 
+	appearance: none;  
+}
+
+
+
+
+
+
+
+.admin__table {   
+	border-radius: 12px;
+	overflow: hidden;
+	box-shadow: 4px 4px 20px 0 rgba(195, 195, 195, 0.25);
+}
+.admin__table table thead { 
+	background: #e0eafd; 
+}
+
+.admin__table table th { 
+	font-weight: 500;
+	font-size: 20px;  
+	padding: 12px;  
+	text-align: left;
+	vertical-align: middle;
+}
+
+.admin__table table td {   
+	font-weight: 400;
+	font-size: 20px;
+	line-height: 26px;
+	padding: 12px; 
+	height: 131px;
+	vertical-align: middle;
+}
+
+.admin__table tbody tr:nth-child(even) {
+    background: #f4f8ff; /* Фон для четных строк */
+}
+
+.admin__table tbody tr:nth-child(odd) {
+    background: #ffffff; /* Фон для нечетных строк (белый) */
+}
+ 
+
+
+
+
+
+ 
+.admin__checkbox input[type="checkbox"] { 
+	width: 16px;
+	height: 16px;
+	border-radius: 4px; 
+	border: 1px solid #d5d7da;  
+    accent-color: #0c42a8;
+    cursor: pointer; 
+    margin: 0 10px 0 0;
+}
+
+ 
+
+
+
+span.admin__color1 { 
+	padding: 4px 12px;
+	border-radius: 6px;
+	background: #d1fae5;
+}
+
+span.admin__color2 { 
+	padding: 4px 12px;
+	border-radius: 6px;
+	background: #fef9c3;
+}
+
+.admin__table table td img { 
+	border-radius: 12px;
+	width: 100px;
+	height: 87px;
+	font-weight: 400;
+	font-size: 20px;  
+}
+
+.admin__table table td p {    
+	font-weight: 400;
+	font-size: 20px; 
+}
+
+
+
+th {
+	height: 74px;
+}
+
+td {
+	height: 131px;
+}
+
+.admin__article {
+	min-width: 224px; 
+	max-width: 224px; 
+}
+
+.admin__name {
+	min-width: 315px;  
+	max-width: 315px; 
+}
+
+.admin__price {
+	min-width: 110px; 
+	max-width: 110px; 
+}
+
+.admin__remains {
+	min-width: 109px;
+	max-width: 109px; 
+}
+
+.admin__category {
+	min-width: 136px; 
+	max-width: 136px; 
+}
+
+.admin__color {
+	min-width: 140px; 
+	max-width: 140px;
+}
+
+.admin__dimensions {
+	min-width: 219px; 
+	max-width: 219px; 
+}
+.admin__image {
+	min-width: 124px; 
+	max-width: 124px; 
+}
+
+.admin__templates {
+	min-width: 228px; 
+	max-width: 228px; 
+}
+
+.admin__actions {
+	min-width: 143px; 
+	max-width: 143px; 
+}
+
+.admin__actions a {
+	color: #0c42a8;
+}
+
+.admin__templates label {  
+	display: block;
+}
+
+.admin__templates label {  
+	margin-bottom: 10px;
+}
+ 
+.admin__templates input[type="radio" i] {  
+	vertical-align: middle;
+}
+
+.admin__templates input[type="radio" i] {  
+	width: 20px;
+	height: 20px;
+    cursor: pointer; 
+    margin: 0px 10px 0 0;
+    padding: 0px;
+    accent-color: #0c42a8;
+}
+
+
+/*Страница Редактирование*/
+
+.edit__back {
+	vertical-align: middle;
+	font-weight: 400;
+	font-size: 16px;
+	line-height: 150%;
+	color: #0c42a8;
+}
+
+.edit__back img {
+	width: 6px;
+	height: 10px;
+	margin-right: 8px;
+}
+
+.edit__title {
+	margin: 40px 0;
+}
+
+.edit__name {
+	font-weight: 500;
+	font-size: 24px;
+	margin: 40px 0;
+}
+
+.edit__info {
+	border-radius: 12px;
+	width: 904px;
+	height: auto;
+	
+	border-radius: 12px;
+	padding: 24px;
+	width: 904px;
+	height: 681px;
+	
+	box-shadow: 4px 4px 20px 0 rgba(195, 195, 195, 0.25);
+	background: #fff;
+}
+
+.edit__info h2 { 
+	font-weight: 600;
+	font-size: 18px;
+	margin-bottom: 24px;
+}
+
+.edit__wrapper { 
+	display: flex; 
+    flex-direction: row;  
+    gap: 24px;
+	margin-bottom: 24px;
+}
+
+.edit__wrapper label {  
+	display: flex;  
+    flex-direction: column;  
+	font-weight: 400;
+	font-size: 14px;
+	line-height: 143%;
+}
+
+.edit__wrapper input {
+	width: 416px;
+	height: 52px;
+	background: #f5f7fa;
+	border-radius: 4px;
+	padding: 14px 16px;
+	margin-top: 4px;
+	border: none;
+	
+	font-weight: 400;
+	font-size: 14px;
+	line-height: 143%; 
+}
+
+.edit__file {
+	display: flex; 
+    flex-direction: column;  
+    
+    width: 416px;
+	height: 61px;
+    
+    font-weight: 600;
+	font-size: 14px;
+	margin-top: 24px;
+}
+
+.edit__file:first-child {
+	margin-top: 0;
+}
+
+.edit__file div {
+	display: flex;
+	align-items: center;
+	margin-top: 16px;
+}
+
+.edit__file a {
+	font-weight: 400;
+	font-size: 14px;
+	line-height: 143%; 
+	color: #0c42a8;
+	margin-left: 12px;
+	z-index: 2;
+}
+
+.edit__file img {
+	width: 24px;
+	height: 24px; 
+	
+}
+
+.edit__file p {
+	font-weight: 400;
+	font-size: 14px;
+	line-height: 143%; 
+	color: #0c42a8;
+	margin-left: 12px;
+}
+
+.edit__file span {
+	font-weight: 400;
+	font-size: 14px;
+	line-height: 143%; 
+	color: #66727f;
+	margin-left: 8px;
+	
+}
+
+.edit__file span:first-child { 
+	color: #222;
+	margin-left: 0;
+}
+
+label.edit__file {
+	cursor: pointer;
+	
+}
+.edit__file input {
+	margin: 26px 0 0 0; 
+	
+	visibility: hidden;
+	
+}
+
+
+
+
+.edit__materials {  
+	border-radius: 12px; 
+	width: 904px;
+	height: auto;
+	
+	border-radius: 12px;
+	padding: 24px;
+	width: 904px;
+	height: 551px;
+	
+	box-shadow: 4px 4px 20px 0 rgba(195, 195, 195, 0.25);
+	background: #fff;
+	margin-top: 40px;
+}
+
+
+.edit__materials h2 {   
+	margin-bottom: 24px;
+}
+
+.edit__materials .edit__wrapper {   
+	margin-top: 24px;
+	display: flex;
+	align-items: flex-end;
+}
+.edit__materials .edit__wrapper a {   
+	color: #0c42a8;
+	margin-bottom: 16px;
+	font-size: 14px;
+}
+
+.edit__sizes {  
+	border-radius: 12px; 
+	width: 904px;
+	height: auto;
+	
+	border-radius: 12px;
+	padding: 24px;
+	width: 904px;
+	height: 451px;
+	
+	box-shadow: 4px 4px 20px 0 rgba(195, 195, 195, 0.25);
+	background: #fff;
+	margin-top: 40px;
+}
+
+
+.edit__sizes h2 {   
+	margin-bottom: 24px;
+}
+
+.edit__sizes .edit__wrapper {   
+	margin-top: 24px;
+	display: flex;
+	align-items: flex-end;
+}
+
+.edit__sizes .edit__wrapper input {   
+	width: 336px;
+}
+
+.edit__sizes .edit__wrapper a {   
+	color: #0c42a8;
+	margin-bottom: 16px;
+	font-size: 14px;
+}
+
+.edit__button {
+	width: 196px;
+	height: 52px; 
+	
+	display: flex;
+    align-items: center;
+    justify-content: center;
+	border-radius: 8px; 
+	background: #0c42a8;
+	
+	font-weight: 500;
+	font-size: 16px;
+	color: #fff;
+}
+
+.edit__button2 {
+	width: 196px;
+	height: 52px; 
+	
+	display: flex;
+    align-items: center;
+    justify-content: center;
+	border-radius: 8px;
+	border: 2px solid #0c42a8; 
+	background: #fff;
+	
+	font-weight: 500;
+	font-size: 16px;
+	color: #0c42a8;
+}
+
+.edit__button:hover {
+	opacity: 0.9;
+} 
+
+.edit__button2:hover {
+	opacity: 0.8;
+} 
+
+.edit__wrapper .edit__button, .edit__wrapper .edit__button2 {
+	margin-top: 40px;
+}
+ 
