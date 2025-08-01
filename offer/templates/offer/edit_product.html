@@ -238,14 +238,16 @@
         const newForm = document.createElement('div');
         newForm.className = 'formset-item material-form';
         newForm.innerHTML = `
-            <div style="flex-grow: 0;">
+            <div class="edit__wrapper" style="flex-grow: 0;">
                 <label>
                     Материал
-                    <input type="text" name="materials-${index}-name" id="id_materials-${index}-name">
+                    <input type="text" name="materials-${index}-name" id="id_materials-${index}-name" class="edit__input">
+                </label>
+                <label class="delete-label">
+                    Удалить:
+                    <input type="checkbox" name="materials-${index}-DELETE" id="id_materials-${index}-DELETE">
                 </label>
             </div>
-            <button type="button" class="delete-formset">Удалить</button>
-            <input type="hidden" name="materials-${index}-DELETE" id="id_materials-${index}-DELETE">
             <input type="hidden" name="materials-${index}-id" id="id_materials-${index}-id">
         `;
         return newForm;
@@ -256,18 +258,20 @@
         const newForm = document.createElement('div');
         newForm.className = 'formset-item dimension-form';
         newForm.innerHTML = `
-            <div>
+            <div class="edit__wrapper">
                 <label>
                     Название
-                    <input type="text" name="dimensions-${index}-name" id="id_dimensions-${index}-name">
+                    <input type="text" name="dimensions-${index}-name" id="id_dimensions-${index}-name" class="edit__input">
                 </label>
                 <label>
                     Значение
-                    <input type="text" name="dimensions-${index}-value" id="id_dimensions-${index}-value">
+                    <input type="text" name="dimensions-${index}-value" id="id_dimensions-${index}-value" class="edit__input">
+                </label>
+                <label class="delete-label">
+                    Удалить:
+                    <input type="checkbox" name="dimensions-${index}-DELETE" id="id_dimensions-${index}-DELETE">
                 </label>
             </div>
-            <button type="button" class="delete-formset">Удалить</button>
-            <input type="hidden" name="dimensions-${index}-DELETE" id="id_dimensions-${index}-DELETE">
             <input type="hidden" name="dimensions-${index}-id" id="id_dimensions-${index}-id">
         `;
         return newForm;
