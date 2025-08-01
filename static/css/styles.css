@@ -658,4 +658,46 @@ label.edit__file {
 .edit__wrapper .edit__button, .edit__wrapper .edit__button2 {
 	margin-top: 40px;
 }
- 
+
+
+th[data-sort-key] {
+    position: relative;
+    user-select: none;
+}
+
+th .sort-arrow {
+    font-size: 0.8em;
+    margin-left: 6px;
+    opacity: 0.4;
+}
+
+th.sorted-asc .sort-arrow::after {
+    content: "▲";
+    opacity: 1;
+}
+
+th.sorted-desc .sort-arrow::after {
+    content: "▼";
+    opacity: 1;
+}
+
+.admin__button--reset {
+	width: 161px;
+	height: 52px;
+	padding: 0 24px;
+	border: none;
+	border-radius: 8px;
+	background: #0c42a8;
+	color: #fff;
+	font-weight: 500;
+	font-size: 20px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	cursor: pointer;
+	transition: opacity 0.2s ease;
+}
+
+.admin__button--reset:hover {
+	opacity: 0.9;
+}

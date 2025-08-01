@@ -43,26 +43,14 @@
                     </select>
                     <img class="admin__select-img" src="{% static 'images/arrow.svg' %}">
                 </label>
-                
-                <label>Сортировка 1 
-                    <select name="sort1">
-                        <option value="">Сначала названия на английском</option> 
-                        <option value="name_ru" {% if request.GET.sort1 == 'name_ru' %}selected{% endif %}>Сначала названия на русском</option>
-                    </select>
-                    <img class="admin__select-img" src="{% static 'images/arrow.svg' %}">
-                </label>
-                
-                <label>Сортировка 2 
-                    <select name="sort2">
-                        <option value="asc" {% if request.GET.sort2 == 'asc' %}selected{% endif %}>От A до Z</option> 
-                        <option value="desc" {% if request.GET.sort2 == 'desc' %}selected{% endif %}>От Z до A</option>
-                    </select>
-                    <img class="admin__select-img" src="{% static 'images/arrow.svg' %}">
-                </label>
+
                 
                 <button class="admin__button" type="submit">
                     Применить
                 </button>
+                <a href="{% url 'product_list' %}" class="admin__button admin__button--reset">
+                    Очистить
+                </a>
             </form>
             
             <form method="post" action="{% url 'convert_to_pdf' %}" id="pdf-form" autocomplete="off">
@@ -74,12 +62,12 @@
                                 <!-- <th class="admin__article">
                                     <input type="checkbox" id="select-all" onclick="toggleSelectAll(this)" class="form-check-input">
                                 </th> -->
-                                <th class="admin__article">Артикул</th>
-                                <th class="admin__name">Наименование</th>
-                                <th class="admin__price">Цена</th>
-                                <th class="admin__remains">Остаток</th>
-                                <th class="admin__category">Категория</th> 
-                                <th class="admin__color">Цвет</th> 
+                                <th class="admin__article" data-sort-key="article">Артикул <span class="sort-arrow"></th>
+                                <th class="admin__name" data-sort-key="name">Наименование <span class="sort-arrow"></th>
+                                <th class="admin__price" data-sort-key="price">Цена <span class="sort-arrow"></th>
+                                <th class="admin__remains" data-sort-key="stock">Остаток <span class="sort-arrow"></th>
+                                <th class="admin__category" data-sort-key="category">Категория <span class="sort-arrow"></th>
+                                <th class="admin__color" data-sort-key="color">Цвет <span class="sort-arrow"></th>
                                 <th class="admin__dimensions">Габариты</th>
                                 <th class="admin__image">Фото</th>
                                 <th class="admin__templates">
@@ -224,5 +212,120 @@
             }
         };
     });
+
+document.addEventListener('DOMContentLoaded', () => {
+    const CHECKBOX_NAME = 'product_ids';
+    const STORAGE_KEY = 'selected_products';
+    const tbody = document.querySelector('tbody');
+    const headers = document.querySelectorAll('th[data-sort-key]');
+    let currentSort = { key: null, direction: 1 };
+
+    // === Сохраняем чекнутые товары и поднимаем их вверх ===
+    const selectedIds = new Set(JSON.parse(localStorage.getItem(STORAGE_KEY)) || []);
+    const allRows = Array.from(tbody.querySelectorAll('tr'));
+    const selectedRows = [];
+
+    allRows.forEach(row => {
+        const checkbox = row.querySelector(`input[name="${CHECKBOX_NAME}"]`);
+        if (!checkbox) return;
+
+        if (selectedIds.has(checkbox.value)) {
+            checkbox.checked = true;
+            selectedRows.push(row);
+        }
+    });
+
+    selectedRows.reverse().forEach(row => {
+        tbody.insertBefore(row, tbody.firstChild);
+    });
+
+    tbody.querySelectorAll(`input[name="${CHECKBOX_NAME}"]`).forEach(checkbox => {
+        checkbox.addEventListener('change', function () {
+            const id = checkbox.value;
+            const row = checkbox.closest('tr');
+
+            if (checkbox.checked) {
+                selectedIds.add(id);
+                tbody.insertBefore(row, tbody.firstChild);
+                row.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            } else {
+                selectedIds.delete(id);
+            }
+
+            localStorage.setItem(STORAGE_KEY, JSON.stringify([...selectedIds]));
+        });
+    });
+
+    // === Сортировка по клику по заголовкам ===
+    headers.forEach(header => {
+        header.style.cursor = 'pointer';
+
+        header.addEventListener('click', () => {
+            const key = header.dataset.sortKey;
+
+            // Сброс стрелок
+            headers.forEach(h => {
+                h.classList.remove('sorted-asc', 'sorted-desc');
+            });
+
+            // Направление
+            if (currentSort.key === key) {
+                currentSort.direction *= -1;
+            } else {
+                currentSort = { key, direction: 1 };
+            }
+
+            header.classList.add(currentSort.direction === 1 ? 'sorted-asc' : 'sorted-desc');
+
+            const rows = Array.from(tbody.querySelectorAll('tr')).filter(row => {
+                const checkbox = row.querySelector(`input[name="${CHECKBOX_NAME}"]`);
+                return checkbox && !selectedIds.has(checkbox.value); // Только неотмеченные
+            });
+
+            rows.sort((a, b) => {
+                const valA = getCellValue(a, key);
+                const valB = getCellValue(b, key);
+
+                if (!isNaN(valA) && !isNaN(valB)) {
+                    return (valA - valB) * currentSort.direction;
+                } else {
+                    return valA.localeCompare(valB, 'ru') * currentSort.direction;
+                }
+            });
+
+            const nonSelectedAnchor = tbody.querySelector(`tr:not(:has(input[name="${CHECKBOX_NAME}"]:checked))`);
+
+            rows.forEach(row => {
+                if (nonSelectedAnchor) {
+                    tbody.insertBefore(row, nonSelectedAnchor);
+                } else {
+                    tbody.appendChild(row);
+                }
+            });
+        });
+    });
+
+    function getCellValue(row, key) {
+        switch (key) {
+            case 'article':
+                return row.querySelector('.admin__article').innerText.trim();
+            case 'name':
+                return row.querySelector('.admin__name').innerText.trim();
+            case 'price':
+                return parseFloat(row.querySelector('.admin__price').innerText.replace(/[₽\s]/g, '')) || 0;
+            case 'stock':
+                return parseInt(row.querySelector('.admin__remains').innerText) || 0;
+            case 'category':
+                return row.querySelector('.admin__category').innerText.trim();
+            case 'color':
+                return row.querySelector('.admin__color').innerText.trim();
+            default:
+                return '';
+        }
+    }
+});
+
+
+
 </script>
 {% endblock %}
