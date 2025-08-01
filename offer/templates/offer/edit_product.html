@@ -100,15 +100,21 @@
                     </div>
                     
                     <div class="edit__wrapper">
-                        <h2> Изображения товара <span class="required">*</span></h2>
+                        
                         <label class="edit__file">
                             Основное изображение <span class="required">*</span>
-                            <div>
+                            <div class="file-preview">
                                 {% if form.instance.main_photo %}
                                     <img src="{{ form.instance.main_photo.url }}" width="50">
+                                    <div class="file-info">
+                                        <span class="file-name">{{ form.instance.main_photo.name|slice:"20:" }}</span>
+                                        <span class="file-size">{{ form.instance.main_photo.size|filesizeformat }}</span>
+                                    </div>
                                 {% else %}
                                     <img src="{% static 'images/attachment.svg' %}">
-                                    <p>Выбрать файл</p>
+                                    <div class="file-info">
+                                        <p>Выбрать файл</p>
+                                    </div>
                                 {% endif %}
                             </div>
                             {{ form.main_photo }}
@@ -119,12 +125,18 @@
                         
                         <label class="edit__file">
                             Доп. изображение 1 <span class="required">*</span>
-                            <div>
+                            <div class="file-preview">
                                 {% if form.instance.additional_photo1 %}
                                     <img src="{{ form.instance.additional_photo1.url }}" width="50">
+                                    <div class="file-info">
+                                        <span class="file-name">{{ form.instance.additional_photo1.name|slice:"20:" }}</span>
+                                        <span class="file-size">{{ form.instance.additional_photo1.size|filesizeformat }}</span>
+                                    </div>
                                 {% else %}
                                     <img src="{% static 'images/attachment.svg' %}">
-                                    <p>Выбрать файл</p>
+                                    <div class="file-info">
+                                        <p>Выбрать файл</p>
+                                    </div>
                                 {% endif %}
                             </div>
                             {{ form.additional_photo1 }}
@@ -135,12 +147,18 @@
                         
                         <label class="edit__file">
                             Доп. изображение 2 <span class="required">*</span>
-                            <div>
+                            <div class="file-preview">
                                 {% if form.instance.additional_photo2 %}
                                     <img src="{{ form.instance.additional_photo2.url }}" width="50">
+                                    <div class="file-info">
+                                        <span class="file-name">{{ form.instance.additional_photo2.name|slice:"20:" }}</span>
+                                        <span class="file-size">{{ form.instance.additional_photo2.size|filesizeformat }}</span>
+                                    </div>
                                 {% else %}
                                     <img src="{% static 'images/attachment.svg' %}">
-                                    <p>Выбрать файл</p>
+                                    <div class="file-info">
+                                        <p>Выбрать файл</p>
+                                    </div>
                                 {% endif %}
                             </div>
                             {{ form.additional_photo2 }}
@@ -164,20 +182,18 @@
                         {% for form in material_formset %}
                         <div class="formset-item material-form">
                             {{ form.id }}
-                            <div style="flex-grow: 0;" class="edit__wrapper">
+                            <div class="edit__wrapper">
                                 <label>
                                     Материал
                                     {{ form.name }}
                                 </label>
-                                {% for error in form.name.errors %}
-                                    <div class="form-error">{{ error }}</div>
-                                {% endfor %}
-                            <label class="delete-label">
-                                Удалить: {{ form.DELETE }}
-                            </label>
+                                <label class="delete-label">
+                                    Удалить: {{ form.DELETE }}
+                                </label>
                             </div>
-                            
-                           
+                            {% for error in form.name.errors %}
+                                <div class="form-error">{{ error }}</div>
+                            {% endfor %}
                         </div>
                         {% endfor %}
                     </div>
@@ -188,6 +204,8 @@
                 </div>
 
                 <!-- Блок размеров -->
+                <br>
+              
                 <div class="formset-container">
                     <h2>Размеры</h2>
                     <br>
@@ -206,14 +224,13 @@
                                     Значение
                                     {{ form.value }}
                                 </label>
-                                {% for error in form.value.errors %}
-                                    <div class="form-error">{{ error }}</div>
-                                {% endfor %}
                                 <label class="delete-label">
-                                Удалить: {{ form.DELETE }}
-                            </label>
+                                    Удалить: {{ form.DELETE }}
+                                </label>
                             </div>
-                           
+                            {% for error in form.value.errors %}
+                                <div class="form-error">{{ error }}</div>
+                            {% endfor %}
                         </div>
                         {% endfor %}
                     </div>
@@ -238,14 +255,16 @@
         const newForm = document.createElement('div');
         newForm.className = 'formset-item material-form';
         newForm.innerHTML = `
-            <div style="flex-grow: 0;">
+            {{ form.id }}
+            <div class="edit__wrapper">
                 <label>
                     Материал
-                    <input type="text" name="materials-${index}-name" id="id_materials-${index}-name">
+                    <input type="text" name="materials-${index}-name" id="id_materials-${index}-name" class="form-control">
+                </label>
+                <label class="delete-label">
+                    Удалить: <input type="checkbox" name="materials-${index}-DELETE" id="id_materials-${index}-DELETE">
                 </label>
             </div>
-            <button type="button" class="delete-formset">Удалить</button>
-            <input type="hidden" name="materials-${index}-DELETE" id="id_materials-${index}-DELETE">
             <input type="hidden" name="materials-${index}-id" id="id_materials-${index}-id">
         `;
         return newForm;
@@ -256,21 +275,54 @@
         const newForm = document.createElement('div');
         newForm.className = 'formset-item dimension-form';
         newForm.innerHTML = `
-            <div>
+            {{ form.id }}
+             
+            <div class="edit__wrapper">
                 <label>
                     Название
-                    <input type="text" name="dimensions-${index}-name" id="id_dimensions-${index}-name">
+                    <input type="text" name="dimensions-${index}-name" id="id_dimensions-${index}-name" class="form-control">
                 </label>
                 <label>
                     Значение
-                    <input type="text" name="dimensions-${index}-value" id="id_dimensions-${index}-value">
+                    <input type="text" name="dimensions-${index}-value" id="id_dimensions-${index}-value" class="form-control">
+                </label>
+                <label class="delete-label">
+                    Удалить: <input type="checkbox" name="dimensions-${index}-DELETE" id="id_dimensions-${index}-DELETE">
                 </label>
             </div>
-            <button type="button" class="delete-formset">Удалить</button>
-            <input type="hidden" name="dimensions-${index}-DELETE" id="id_dimensions-${index}-DELETE">
             <input type="hidden" name="dimensions-${index}-id" id="id_dimensions-${index}-id">
         `;
         return newForm;
+    }
+
+    // Функция для отображения информации о выбранном файле
+    function displayFileInfo(input) {
+        const filePreview = input.closest('.edit__file').querySelector('.file-preview');
+        const fileInfo = filePreview.querySelector('.file-info');
+        
+        if (input.files && input.files[0]) {
+            const file = input.files[0];
+            const reader = new FileReader();
+            
+            reader.onload = function(e) {
+                filePreview.querySelector('img').src = e.target.result;
+                fileInfo.innerHTML = `
+                    <span class="file-name">${file.name}</span>
+                    <span class="file-size">${formatFileSize(file.size)}</span>
+                `;
+            }
+            
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+
+    // Функция для форматирования размера файла
+    function formatFileSize(bytes) {
+        if (bytes === 0) return '0 Bytes';
+        const k = 1024;
+        const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+        const i = Math.floor(Math.log(bytes) / Math.log(k));
+        return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
     }
 
     document.addEventListener('DOMContentLoaded', function() {
@@ -284,13 +336,17 @@
             container.appendChild(newForm);
             totalForms.value = index + 1;
             
-            // Добавляем обработчик для новой кнопки удаления
-            newForm.querySelector('.delete-formset').addEventListener('click', function() {
-                handleDeleteFormset(this, 'materials');
+            // Добавляем обработчик для чекбокса удаления
+            const deleteCheckbox = newForm.querySelector(`input[name="materials-${index}-DELETE"]`);
+            deleteCheckbox.addEventListener('change', function() {
+                if (this.checked) {
+                    newForm.style.display = 'none';
+                } else {
+                    newForm.style.display = 'flex';
+                }
             });
         });
 
-        
         // Обработчик добавления размера
         document.getElementById('add-dimension').addEventListener('click', function() {
             const container = document.getElementById('dimensions-formset');
@@ -301,123 +357,69 @@
             container.appendChild(newForm);
             totalForms.value = index + 1;
             
-            // Добавляем обработчик для новой кнопки удаления
-            newForm.querySelector('.delete-formset').addEventListener('click', function() {
-                handleDeleteFormset(this, 'dimensions');
+            // Добавляем обработчик для чекбокса удаления
+            const deleteCheckbox = newForm.querySelector(`input[name="dimensions-${index}-DELETE"]`);
+            deleteCheckbox.addEventListener('change', function() {
+                if (this.checked) {
+                    newForm.style.display = 'none';
+                } else {
+                    newForm.style.display = 'flex';
+                }
             });
         });
 
-        // Общая функция для обработки удаления
-        function handleDeleteFormset(button, prefix) {
-            const formItem = button.closest('.formset-item');
-            const deleteInput = formItem.querySelector(`input[name^="${prefix}-"][name$="-DELETE"]`);
-            const idInput = formItem.querySelector(`input[name^="${prefix}-"][name$="-id"]`);
-            
-            if (deleteInput) {
-                if (idInput && idInput.value) {
-                    // Для существующих записей - помечаем для удаления
-                    deleteInput.value = 'on';
+        // Инициализация обработчиков для существующих форм
+        document.querySelectorAll('input[name$="-DELETE"]').forEach(checkbox => {
+            checkbox.addEventListener('change', function() {
+                const formItem = this.closest('.formset-item');
+                if (this.checked) {
                     formItem.style.display = 'none';
-                    
-                    // Отключаем все поля ввода, кроме DELETE и id
-                    formItem.querySelectorAll(`input:not([name^="${prefix}-"][name$="-DELETE"]):not([name^="${prefix}-"][name$="-id"]), select, textarea`).forEach(input => {
-                        input.disabled = true;
-                    });
                 } else {
-                    // Для новых записей - просто удаляем элемент
-                    formItem.remove();
-                    
-                    // Обновляем индексы оставшихся форм
-                    const forms = document.querySelectorAll(`.${prefix}-form`);
-                    const totalForms = document.getElementById(`id_${prefix}-TOTAL_FORMS`);
-                    totalForms.value = forms.length;
-                    
-                    forms.forEach((form, index) => {
-                        // Обновляем имена всех полей в форме
-                        form.querySelectorAll('input, select, textarea').forEach(field => {
-                            const name = field.name.replace(new RegExp(`${prefix}-\\d+-`), `${prefix}-${index}-`);
-                            field.name = name;
-                            if (field.id) {
-                                field.id = `id_${name}`;
-                            }
-                        });
-                    });
+                    formItem.style.display = 'flex';
                 }
-            }
-        }
-    });
+            });
+        });
 
+        // Обработчики для отображения информации о выбранных файлах
+        document.querySelectorAll('input[type="file"]').forEach(input => {
+            input.addEventListener('change', function() {
+                displayFileInfo(this);
+            });
+        });
+    });
 </script>
 
 <style>
     .formset-container {
-        margin-bottom: 30px;
-        border: 1px solid #eee;
-        padding: 20px;
-        border-radius: 5px;
-        background: #f9f9f9;
+        padding: 1.25vw;
     }
-    
-    .formset-item {
-        display: flex;
-        align-items: flex-end;
-        gap: 15px;
-        margin-bottom: 15px;
-        padding-bottom: 15px;
-        border-bottom: 1px dashed #ddd;
+    .edit__wrapper input {
+        height: 1.3083vw;
     }
-    
-    .formset-item:last-child {
-        border-bottom: none;
-        margin-bottom: 0;
-        padding-bottom: 0;
-    }
-    
-    .formset-footer {
-        margin-top: 20px;
-    }
-    
-    .delete-formset {
-        background: none;
-        color: #000000;
-        border: none;
-        cursor: pointer;
-        padding: 5px 10px;
-        height: fit-content;
-    }
-    
-    .delete-formset:hover {
-        text-decoration: underline;
-    }
-    
-    .edit__images-wrapper {
-        margin-top: 20px;
-    }
-    
-    .edit__file-container {
-        margin-bottom: 15px;
-    }
-    
-    .edit__file {
-        display: block;
-        margin-bottom: 10px;
-    }
-    
+
     .file-preview {
         display: flex;
         align-items: center;
         gap: 10px;
-        margin-top: 5px;
     }
-    
-    .file-preview img {
-        width: 50px;
-        height: 50px;
-        object-fit: cover;
+
+    .file-info {
+        display: flex;
+        flex-direction: column;
     }
-    .delete-label {
-        height: 10px;
+
+    .file-name {
+        font-size: 14px;
+        color: #333;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 150px;
     }
-    
+
+    .file-size {
+        font-size: 12px;
+        color: #666;
+    }
 </style>
 {% endblock %}
